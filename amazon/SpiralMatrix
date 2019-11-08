@@ -1,0 +1,41 @@
+class Solution {
+    public List<Integer> spiralOrder(int[][] matrix) {
+        int r = matrix.length;
+        if(r == 0) return new ArrayList<>();
+        int c = matrix[0].length;
+        int tot = 0;
+        boolean[][] visited = new boolean[r][c];
+        for(int i = 0; i < r; i++)
+            for(int j = 0; j < c; j++)
+                visited[i][j] = false;
+        List<Integer> res = new ArrayList<Integer>();
+        int m = 0, n = 0;
+        while(tot < r * c){
+            while(n < c && visited[m][n] == false){
+                res.add(matrix[m][n]);
+                visited[m][n] = true;
+                n++; tot++;                
+            }
+            m++; n--;
+            while(m < r && visited[m][n] == false){
+                res.add(matrix[m][n]); 
+                visited[m][n] = true;
+                m++; tot++;
+            }
+            m--; n--;
+            while(n >= 0 && visited[m][n] == false){
+                res.add(matrix[m][n]);                
+                visited[m][n] = true;
+                n--; tot++;
+            }
+            m--; n++; 
+            while(m >= 0 && visited[m][n] == false){
+                res.add(matrix[m][n]);                
+                visited[m][n] = true;
+                m--; tot++;
+            }
+            m++; n++;       
+        }
+        return res;
+    }
+}
