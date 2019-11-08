@@ -1,0 +1,45 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    
+    public ListNode mergeKLists(ListNode[] lists) {
+        int n = lists.length;
+        if(n == 0) return null;
+        for(int size = 1; size < n; size = size * 2){
+            for(int l1 = 0; l1 < n - 1; l1 = l1 + size * 2){
+                int l2 = l1 + size;
+                System.out.println("L1: " + l1 + ", L2: " + l2);
+                if(l2 < n) merge(lists, l1, l2);
+            }
+        }
+        return lists[0];
+    }
+    
+    public void merge(ListNode[] lists, int l1, int l2){
+        if(l1 == l2) return;
+        ListNode p = lists[l1];
+        ListNode q = lists[l2];
+        ListNode dummyHead = new ListNode(0);
+        ListNode curr = dummyHead;
+        while(p != null || q != null){
+            int x = p != null ? p.val: Integer.MAX_VALUE;
+            int y = q != null ? q.val: Integer.MAX_VALUE;
+            if(x <= y && p != null){
+                curr.next = new ListNode(x);
+                p = p.next;
+            }
+            else{
+                curr.next = new ListNode(y);
+                q = q.next;
+            }
+            curr = curr.next;                
+        }
+        lists[l1] = dummyHead.next;
+    }
+}
