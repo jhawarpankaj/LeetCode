@@ -1,0 +1,68 @@
+/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public Node next;
+    public Node random;
+
+    public Node() {}
+
+    public Node(int _val,Node _next,Node _random) {
+        val = _val;
+        next = _next;
+        random = _random;
+    }
+};
+*/
+class Solution {
+    public Node copyRandomList(Node head) {
+        Node dummyHead = new Node(0);
+        Node current = dummyHead;
+        Node p = head;
+        while(p != null){
+            current.next = new Node(p.val, null, null);
+            p = p.next;
+            current = current.next;
+        }
+        p = dummyHead.next;        
+        Node q = head;
+        int pos = 0;
+        while(p != null){
+            Integer hops = getHops(head, q, pos);
+            if(hops == null) p.random = null;
+            else {
+                // optimization: if the hops are positive 
+                // do not search the entire list
+                // rather start from the current position.
+                if(hops < 0)
+                    setRandomPointer(dummyHead.next, p, hops, pos);
+                else
+                    setRandomPointer(p, p, hops, 0);
+            }
+            pos++;
+            p = p.next;
+            q = q.next;
+        }
+        return dummyHead.next;
+    }
+    
+    Integer getHops(Node head, Node p, int pos){
+        Node rand = p.random;
+        if(rand == null) return null;
+        int count = 0 - pos;
+        while(head != rand){
+            count = count + 1;
+            head = head.next;
+        }
+        return count;
+    }
+    
+    void setRandomPointer(Node head, Node p, int hops, int pos){
+        int headRelPos = 0 - pos;
+        while(headRelPos != hops){
+            head = head.next;
+            headRelPos++;
+        }
+        p.random = head;
+    }
+}
