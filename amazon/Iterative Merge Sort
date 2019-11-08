@@ -1,0 +1,59 @@
+package test;
+
+public class MergeSort {
+
+	public static void main(String[] args) {
+		int arr[] = {12, 11, 13, 5, 6, 4};
+		recursive(arr, 0, arr.length - 1);		
+		iterative(arr);
+		for(int i: arr) {
+			System.out.println(i + ", ");
+		}
+	}
+
+	private static void iterative(int[] arr) {
+		int n = arr.length;
+		for(int size = 1; size < n; size = size * 2){
+			for(int l = 0; l < n; l = l + size * 2){
+				int m = Math.min(l + size - 1, n - 1);
+				int h = Math.min(l + size * 2 - 1, n - 1);
+				merge(arr, l, m, h);
+			}
+		}
+	}
+
+	static void recursive(int[] arr, int l, int h){
+		if(l < h) {
+			int m = l + (h - l)/2; // to prevent overflow, same as (l+h)/2
+			recursive(arr, l, m);
+			recursive(arr, m + 1, h);
+			merge(arr, l, m, h);
+		}
+	}
+
+	static void merge(int[] arr, int l, int m, int h){
+		
+		int i = l;
+		int j = m + 1;
+		int[] temp = new int[h - l + 1];
+		int k = 0;
+		while(i <= m || j <= h){
+			int x = i <= m ? arr[i]: Integer.MAX_VALUE;
+			int y = j <= h ? arr[j]: Integer.MAX_VALUE;
+			if(x <= y && i <= m) { // Note why the second condition is important.
+				temp[k] = x;
+				i++;
+			}
+			else{
+				temp[k] = y;
+				j++;
+			}
+			k++;
+		}
+		k = 0;
+		while(l <= h){
+			arr[l] = temp[k];
+			l++; k++;
+		}		
+	}
+}
