@@ -1,0 +1,46 @@
+class Solution {
+    public int[][] kClosest(int[][] points, int K) {
+        int index = quickselect(points, 0, points.length - 1, K - 1);
+        int[][] ret = new int[K][2];
+        for(int i = 0; i <= index; i++){
+            ret[i] = points[i];
+        }
+        return ret;
+    }
+    
+    double dist(int[][] p, int i){
+        return (double) Math.sqrt(p[i][0] * p[i][0] + p[i][1] * p[i][1]);
+    }
+    
+    int quickselect(int[][] points, int l, int h, int k){
+        if(l <= h){
+            int index = partition(points, l, h);
+            if(index == k) return index;
+            else if(index > k) return quickselect(points, l, index - 1, k);
+            else return quickselect(points, index + 1, h, k);
+        }
+        throw new IllegalArgumentException();
+    }
+    
+    int partition(int[][] points, int l, int h){
+        double pivot = dist(points, h);
+        for(int i = l; i < h; i++){
+            // to sort ascending, collect all small elements to the beginning.
+            if(dist(points, i) < pivot){
+                // we are swapping all elements with the starting element.
+                // so, all smaller elems are getting collected at the beginning.
+                swap(points, i, l);                 
+                l++;
+            }
+        }
+        swap(points, h, l);
+        return l;
+    }
+    
+    void swap(int[][] points, int i, int j){
+        // Elems in 2D array can be swapped by just swapping the 1D array.
+        int[] temp = points[i]; 
+        points[i] = points[j];
+        points[j] = temp;
+    }    
+}
