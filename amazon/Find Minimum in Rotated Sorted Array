@@ -12,7 +12,7 @@ class Solution {
             
             // So keep in mind while writing the code, what is that you want to do 
             // if there are only one or two elements. Consider that and move l to the right is what is required.
-            
+            // Also, note that while doing so, while condition should be while(l <= h), to not miss out on h.
             int m = l + (h - l)/2;
             if(nums[l] <= nums[m]){
                 min = Math.min(nums[l], min);
