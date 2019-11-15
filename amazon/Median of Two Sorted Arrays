@@ -28,7 +28,6 @@ class Solution {
                 l = cut1 + 1;
             
         }
-        return new IllegalArgumentException();
-        
+        throw new IllegalArgumentException();        
     }
 }
