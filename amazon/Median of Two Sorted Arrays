@@ -22,6 +22,10 @@ class Solution {
                 else
                     return Math.max(maxLeft1, maxLeft2);
             }
+            // note that the pointers l and h are moving w.r.t the smallest array
+            // and the bigger array just adjust accoridng to the value of cut1.
+            // So, if conditions do not match, we need to move the l and h pointers
+            // w.r.t to the cut1.
             else if(maxLeft1 > minRight2)
                 h = cut1 - 1;
             else
