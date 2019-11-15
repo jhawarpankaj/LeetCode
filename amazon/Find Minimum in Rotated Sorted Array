@@ -1,0 +1,28 @@
+class Solution {
+    public int findMin(int[] nums) {
+        int l = 0;
+        int h = nums.length - 1;
+        int min = nums[0];
+        while(l <= h){
+            // how middle element is calculated is important to note.
+            // Note that if there are either one or two elements, the middle
+            // element will always be the first one.
+            // so the equality check is important in first condition.
+            // e.g., Input: [2, 1] here, l = m = 0, and h = 1
+            
+            // So keep in mind while writing the code, what is that you want to do 
+            // if there are only one or two elements. Consider that and move l to the right is what is required.
+            
+            int m = l + (h - l)/2;
+            if(nums[l] <= nums[m]){
+                min = Math.min(nums[l], min);
+                l = m + 1;        
+            }
+            else{
+                min = Math.min(min, nums[m]);
+                h = m;
+            }
+        }
+        return min;
+    }
+}
