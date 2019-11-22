@@ -1,0 +1,25 @@
+class Solution {
+    public int search(int[] nums, int target) {
+        int l = 0;
+        int h = nums.length - 1;
+        while(l <= h){
+            int m = l + (h - l) / 2; // check overflow.
+            if(target == nums[m]) return m;
+            
+            // the idea here is to move the pointers in an increasing sequence
+            // because its easy to check with certainty.
+            // In an increase-decrease case, we are not sure where to move.
+            // and the other case automatically goes into the else case.
+            
+            else if(nums[m] >= nums[l]){
+                if(target >= nums[l] && target < nums[m]) h = m - 1;
+                else l = m + 1;
+            }
+            else{
+                if(target > nums[m] && target <= nums[h]) l = m + 1;
+                else h = m - 1;
+            }
+        }
+        return -1;
+    }
+}
