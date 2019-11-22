@@ -1,0 +1,46 @@
+class Solution {
+    public int myAtoi(String str) {
+        int l = 0;
+        while(l < str.length() && str.charAt(l) == ' ') l++;
+        if(l == str.length()) return 0;
+        int sign = 1;
+        if(str.charAt(l) == '+' || str.charAt(l) == '-'){
+            if(str.charAt(l) == '-') sign = -1;
+            l++;
+        }
+        StringBuilder sb = new StringBuilder("");
+        
+        while(l < str.length()){
+            if(str.charAt(l) <= '9' && str.charAt(l) >= '0') {
+                sb.append(str.charAt(l));
+                l++;
+            }
+            else{
+                break;
+            }
+        }
+        
+        if(sb.length() == 0) return 0;
+        int i = 0;
+        while(i < sb.length() && sb.charAt(i) == '0') i++;
+        if(i == sb.length()) return 0;
+        String s1 = sb.substring(i).toString();
+        if(s1.length() > 10) {
+            return sign == -1 ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+        }
+        else if(s1.length() == 10){
+            long temp = Long.parseLong(s1.toString());
+            
+            // Important to note:
+            // Integer.MIN_VALUE = -2,147,483,648
+            // Integer.MAX_VALUE =  2,147,483,647
+            // Absolut negative value is one more than the positive value.
+            if(sign == -1 && temp > Integer.MAX_VALUE)
+                return Integer.MIN_VALUE;
+            if(sign == 1 && temp >= Integer.MAX_VALUE)
+                return Integer.MAX_VALUE;
+        }
+        return sign * Integer.parseInt(s1);
+        
+    }
+}
