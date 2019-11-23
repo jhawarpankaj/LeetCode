@@ -1,0 +1,26 @@
+class Solution {
+    public List<String> generateParenthesis(int n) {
+        List<String> result = new ArrayList<String>();
+        if(n == 0){
+            return result;
+        }
+        backtrack("", result, 0, 0, n);
+        return result;
+    }
+    
+    void backtrack(String ans, List<String> result, int open, int close, int max){
+        if(ans.length() == 2 * max){
+            result.add(ans);
+        }
+        if(open < max)
+            backtrack(ans + "(", result, open + 1, close, max);
+            
+        // Special note in case of recursion, if there are more commands after the recurive call.
+        // If there are, then there is still more recursion to be done with the current values of
+        // the parameters. (i.e., with values of ans, open, close etc)
+        // To make not: The recursion is not over yet.
+        
+        if(close < open)
+            backtrack(ans + ")", result, open, close + 1, max);
+    }
+}
