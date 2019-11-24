@@ -1,0 +1,93 @@
+// Recursive
+
+class Solution {
+    
+    // ABCCED
+    
+    public boolean exist(char[][] board, String word) {
+        int r = board.length;
+        int c = board[0].length;
+        if(word.isEmpty()) return false;
+        boolean[][] visited = new boolean[r][c];
+        for(int i = 0; i < r; i++){
+            for(int j = 0; j < c; j++){
+                if(board[i][j] == word.charAt(0)){
+                    // visited[i][j] = true;
+                    if(backtrack(i, j, board, visited, word)) return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    boolean backtrack(int i, int j, char[][] board, boolean[][] visited, String word){
+        if(word.isEmpty()) return true;
+        if(!isValid(i, j, board) || visited[i][j] == true || board[i][j] != word.charAt(0)) return false;
+        visited[i][j] = true;
+        boolean flag = backtrack(i - 1, j, board, visited, word.substring(1)) ||
+            backtrack(i, j - 1, board, visited, word.substring(1)) ||
+            backtrack(i, j +1, board, visited, word.substring(1)) ||
+            backtrack(i + 1, j, board, visited, word.substring(1));
+        visited[i][j] = false;
+        return flag;        
+    }
+    
+    public boolean isValid(int i, int j, char[][] board){
+        int r = board.length;
+        int c = board[0].length;
+        if(i < 0 || i >= r || j < 0 || j >= c) return false;
+        return true;
+    }
+}
+
+// Iterative
+
+class Solution {
+    
+    // ABCCED
+    
+    public boolean exist(char[][] board, String word) {
+        int r = board.length;
+        int c= board[0].length;
+        boolean[][] visited = new boolean[r][c]; // false;
+        
+        for(int i = 0; i < r; i++){
+            for(int j = 0; j < c; j++){
+                if(board[i][j] == word.charAt(0)){
+                    visited[i][j] = true;                    
+                    if(backtrack(i, j, word.substring(1), board, visited)){
+                        return true;
+                    }
+                    visited[i][j] = false;
+                }
+            }
+        }
+        return false;
+    }
+        
+    boolean backtrack(int i, int j, String word, char[][] board, boolean[][] visited){
+        if(word.isEmpty()) return true;
+        int[][] neighbour = {{-1, 0}, {0, -1}, {1, 0}, {0, 1}};
+        for(int m = 0; m < neighbour.length; m++){
+            int x = i + neighbour[m][0];
+            int y = j + neighbour[m][1];
+            if(!isValid(x, y, board)){
+                continue;
+            }
+            else{
+                if(visited[x][y] == true || board[x][y] != word.charAt(0)) continue;
+                visited[x][y] = true;
+                if(backtrack(x, y, word.substring(1), board, visited)) return true;
+                visited[x][y] = false;
+            }
+        }
+        return false;
+    }
+    
+    public boolean isValid(int i, int j, char[][] board){
+        int r = board.length;
+        int c = board[0].length;
+        if(i < 0 || i >= r || j < 0 || j >= c) return false;
+        return true;
+    }
+}
