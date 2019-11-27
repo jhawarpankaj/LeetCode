@@ -1,0 +1,33 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    int max_sum = Integer.MIN_VALUE;
+
+  public int max_gain(TreeNode root) {
+      if(root == null) return 0;
+      int l = max_gain(root.left);
+      int r = max_gain(root.right);
+      int max1 = Math.max(l, r);
+      int max2 = Math.max(root.val + max1, root.val); // the path has to go from root always, so max of (root's value , sum of root and the greatest of both the children) will be picked.
+      int max3 = Math.max(root.val + l + r, max2); // but if this subtree has the greatest of all, it's value should be stored temporarily.
+      max_sum = Math.max(max_sum, max3); // storing the above value.
+      return max2; // this will the best path at the current node. The smaller subtree cannot be returned here, because that is not a valid path. But we have already considered that value and stored it temporarily in max_sum.
+      
+      // But why do we think in the case of max2, that the current root.val is a good choice
+      // if both the sub-child are negative, there can be a positive values deep down the subtree.
+      // Good Question, remember that we are building the tree bottom-up, so we know the total value seen
+      // at this stage.
+  }
+
+  public int maxPathSum(TreeNode root) {
+    max_gain(root);
+    return max_sum;
+  }
+}
