@@ -12,6 +12,8 @@ class Solution {
         if(root == null) return 0;
         int l = height(root.left);
         int r = height(root.right);
+        // Unlike other problem, comparing only l + r + 1 with max
+        // is enough because l and r will never be negative.
         max = Math.max(max, l + r + 1);
         // this actually will give us the depth of the tree.
         // subtract 1 later to get diameter.
