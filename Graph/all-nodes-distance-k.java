@@ -21,12 +21,6 @@ The descriptions of the inputs above are just serializations of these objects.
 
 */
 
-/* 
-A tree can be converted to a GRAPH. An adjacency list can be built for each node.
-Root's neighbour are it's left and right child. It's left child neighbour are it's left and right chid plust 
-the root and same for it's right child.
-*/
-
 class Solution {
     Map<TreeNode, ArrayList<TreeNode>> map = new HashMap<TreeNode, ArrayList<TreeNode>>();
     public List<Integer> distanceK(TreeNode root, TreeNode target, int K) {
@@ -74,3 +68,9 @@ class Solution {
     }
 }
 
+
+/* 
+A tree can be converted to a GRAPH. An adjacency list can be built for each node.
+Root's neighbour are it's left and right child. It's left child neighbour are it's left and right chid plust 
+the root and same for it's right child.
+*/
