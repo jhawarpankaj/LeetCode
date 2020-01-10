@@ -12,9 +12,8 @@ class Solution {
     TreeNode helper(int l, int h, int[] inorder, int[] preorder){
         if(l > h) return null;
         int rootVal = preorder[idx++];
-        if(l == h) return new TreeNode(rootVal);
         TreeNode root = new TreeNode(rootVal);
-        // idx++;
+        if(l == h) return root;
         int index = hm.get(rootVal);
         root.left = helper(l, index - 1, inorder, preorder);
         root.right = helper(index + 1, h, inorder, preorder);
