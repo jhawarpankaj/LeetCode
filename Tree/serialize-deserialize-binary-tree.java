@@ -11,6 +11,11 @@ public class Codec {
         return s.toString();
     }
     
+    public String easyToRemSerialize(TreeNode root) {
+        if(root == null) return "#";
+        return root.val + "," + easyToRemSerialize(root.left) + "," + easyToRemSerialize(root.right);
+    }
+    
     public void reserialize(TreeNode root, StringBuilder s) {
         // if(root == null) return "#";
         // return root.val + "," + reserialize(root.left) + "," + rserialize(root.right);
