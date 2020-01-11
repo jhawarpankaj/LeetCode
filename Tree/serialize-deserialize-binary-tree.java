@@ -36,6 +36,8 @@ public class Codec {
     }
     
     public TreeNode rdeserialize(Deque<String> Q) {
+        // Actually we dont need to do the Q.isEmpty() check here because
+        // the way the tree is serialized will fit into the exact no of recursive calls.
         String val = Q.remove();
         if(val.equals("#")) return null;
         TreeNode root = new TreeNode(Integer.valueOf(val));
