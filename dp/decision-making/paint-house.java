@@ -19,6 +19,7 @@ Explanation: Paint house 0 into blue, paint house 1 into green, paint house 2 in
 */             
 
 // Its about making decision, if choosing the current poses some restrictions on other selection.
+// Look at the house-robber problem.
 
 class Solution {
     public int minCost(int[][] costs) {
