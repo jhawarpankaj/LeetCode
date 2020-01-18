@@ -1,10 +1,23 @@
 
+// Naive recursive solution ...
 
+public int rob(TreeNode root) {
+    if (root == null) return 0;    
+    int val = 0;    
+    if (root.left != null) {
+        val += rob(root.left.left) + rob(root.left.right);
+    }    
+    if (root.right != null) {
+        val += rob(root.right.left) + rob(root.right.right);
+    }    
+    return Math.max(val + root.val, rob(root.left) + rob(root.right));
+}
+
+// In the above solution lot of subproblems solved again and again.
+// We can use DP here.
 
 class Solution {
     Map<TreeNode, Integer> map = new HashMap<TreeNode, Integer>();
-    
-    // DP...
     public int rob(TreeNode root) {
         if(root == null) return 0;
         if(map.containsKey(root)) return map.get(root);
