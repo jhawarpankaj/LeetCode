@@ -23,7 +23,8 @@ Explanation: Paint house 0 into blue, paint house 1 into green, paint house 2 in
 
 class Solution {
     public int minCost(int[][] costs) {
-        return Math.min(helper(costs, costs.length - 1, 0), Math.min(helper(costs, costs.length - 1, 1), helper(costs, costs.length - 1, 2)));
+        return Math.min(helper(costs, costs.length - 1, 0), Math.min(helper(costs, costs.length - 1, 1), 
+                                                                     helper(costs, costs.length - 1, 2)));
     }
     
     int helper(int[][] costs, int i, int j) {
@@ -40,7 +41,8 @@ class Solution {
     public int minCost(int[][] costs) {
         dp = new int[costs.length][3];
         for(int i = 0; i < dp.length; i++) Arrays.fill(dp[i], -1);
-        return Math.min(helper(costs, costs.length - 1, 0), Math.min(helper(costs, costs.length - 1, 1), helper(costs, costs.length - 1, 2)));
+        return Math.min(helper(costs, costs.length - 1, 0), Math.min(helper(costs, costs.length - 1, 1), 
+                                                                     helper(costs, costs.length - 1, 2)));
     }
     
     int helper(int[][] costs, int i, int j) {
