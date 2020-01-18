@@ -36,6 +36,8 @@ class Solution {
         if(root == null) return new int[] {Integer.MAX_VALUE, Integer.MIN_VALUE, 0};
         int[] left = getMaxBST(root.left);
         int[] right = getMaxBST(root.right);
+        // if greater than maximum of left subtree and less than minimum of right subtree, then it 
+        // is a valid binary search tree. Compare this node's value with the min and max of left and right and return.
         if(root.val > left[1] && root.val < right[0])
             return new int[] {Math.min(root.val, left[0]), Math.max(root.val, right[1]), left[2] + right[2] + 1};
         else
