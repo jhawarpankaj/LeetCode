@@ -110,3 +110,32 @@ public class Solution {
 
 // Note the code will work without the 2 optimizations as well but complexity will be higher specially
 // in case of a dense graph.
+
+// The above solution doesn't pass all test cases probably because of the find operation.
+// Below solution pass all test cases
+
+static int[] connectedCities(int n, int g, int[] originCities, int[] destinationCities) {
+        int[] result = new int[originCities.length];
+        if(g >= n) return result;
+        if(g == 0) {
+            Arrays.fill(result, 1);
+            return result;
+        }
+        Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+        for(int i = g + 1; i <= n; i++) map.put(i, i);
+        for(int i = g + 1; i <= n; i++) {
+            int min = Integer.MAX_VALUE;
+            List<Integer> temp = new ArrayList<Integer>();
+            for(int j = i; j <= n; j = j + i) {
+                int current = map.get(j);
+                min = Math.min(min, current);
+                temp.add(j);
+            }
+            for(Integer x : temp) map.put(x, min);
+        }
+        for(int i = 0; i < originCities.length; i++) {
+            if(originCities[i] > g && destinationCities[i] > g && map.get(originCities[i]).equals(map.get(destinationCities[i]))) result[i] = 1;
+            else result[i] = 0;
+        }
+        return result;
+    }
