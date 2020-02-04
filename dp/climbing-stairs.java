@@ -29,5 +29,8 @@ class Solution {
 // The idea is that we are given a source value (0) and to reach a target value(n)
 // constraint for reaching from source to target is: we can only take 1 or 2 steps.
 // Asked for: all possible paths count.
-
+// We can reach to dp[i] from dp[i - 1] by taking 1 step and dp[i - 2] by taking 2 steps.
+// So dp[i - 2] are the no of ways to reach dp[i - 2], same will be to reach dp[i] by taking a 2 step.
+// dp[i - 1] are the no of ways to reach dp[i - 1], same will be to reach dp[i] by taking 1 step.
+// So, dp[i] = dp[i - 1] + dp[i - 2];
 // Special Note: This problem however, can be solved without DP as it is just finding out the nth fibonacci number.
