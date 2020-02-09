@@ -37,6 +37,8 @@ dp[i + 1][j] and dp[i][j + 1] OR dp[i][j]
 
 Imagine these values as a row in a 2D matrix, we want to calculate dp[i + 1][j + 1] and the required values are among the 
 adjacent value or one row above. So we just need only these values.
+
+For linear space explanation: https://www.youtube.com/watch?time_continue=1556&v=DuikFLPt8WQ&feature=emb_title
 */
 
 class Solution {
