@@ -18,6 +18,8 @@ Explanation: The longest common subsequence is "ace" and its length is 3.
 */
 
 class Solution {
+    
+    // This just returns the length of LCS.
     public int longestCommonSubsequence(String text1, String text2) {
         int[][] dp = new int[text1.length() + 1][text2.length() + 1];
         for(int i = 0; i < text1.length(); i++) {
@@ -29,6 +31,32 @@ class Solution {
         }
         return dp[text1.length()][text2.length()];
     }
+    
+    // This prints the LCS.
+    // Watch: https://www.youtube.com/watch?time_continue=1556&v=DuikFLPt8WQ&feature=emb_title
+    // to understand the backtracking while printing the LCS.
+    private static void printingLCS(String x, String y, int m, int n) {
+		int[][] dp = new int[m + 1][n + 1];
+		for(int i = 0; i < m; i++) {
+			for(int j = 0; j < n; j++) {
+				if(x.charAt(i) == y.charAt(j)) dp[i + 1][j + 1] = 1 + dp[i][j];
+				else dp[i + 1][j + 1] = Math.max(dp[i + 1][j], dp[i][j + 1]);
+			}
+		}
+		int len = dp[m][n];
+		char[] c = new char[len];
+		int i = m, j = n, ind = len - 1;
+		while(i > 0 && j > 0) {
+			if(x.charAt(i - 1) == y.charAt(j - 1)) {
+				c[ind--] = x.charAt(i - 1);
+				i--; j--;
+			}
+			else if(dp[i][j - 1] > dp[i - 1][j]) j--;
+			else i--;
+		}
+		for(int k = 0;k < c.length; k++) 
+            System.out.print(c[k]);
+	}
 }
 
 /*
