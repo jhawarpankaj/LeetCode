@@ -25,7 +25,8 @@ Output:
 
 /*
 
-The idea is to use backtracking for generating all possible solution. In backtracking, for every candidate we generate all possible subsets by INCLUDING / NOT INCLUDING that candidate.
+The idea is to use backtracking for generating all possible solution. In backtracking, for every candidate we generate 
+all possible subsets by INCLUDING / NOT INCLUDING that candidate.
 
 We can imagine the iteration as a tree where we pick all the neighbours (siblings) one by one and doing a DFS on each child.
                                                       []
