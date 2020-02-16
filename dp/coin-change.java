@@ -25,12 +25,20 @@ class Solution {
                 if(i - coins[j] >= 0) min = Math.min(min, V[i - coins[j]]);
             }
             if(min == Integer.MAX_VALUE) V[i] = min;
-            else V[i] = 1 + min;
+            else V[i] = 1 + min; // to count the no of min coins required, +1 for using the current coin.
         }
         return V[amount] == Integer.MAX_VALUE ? -1 : V[amount];
     }
 }
 
-// The idea is same like stair climb. We have to reach from a source -> target (0 -> amount)
-// with constraints that we can use any combinations of coins[i]. Here, cost of using a coin is 1.
-// We have to find the minimum number of such coins used.
+/* 
+
+The idea is same like stair climb. We have to reach from a source -> target (0 -> amount) with constraints that we 
+can use any combinations of coins[i]. Here, cost of using a coin is 1. We have to find the minimum number of such coins used.
+ 
+1. When we have to reach from a source to target, we have to build the solution for all the amounts from 1 till target.
+2. To reach any amount, we have the choice of using only the available denominations. So have to loop for the 
+   available coins.
+   
+*/
+
