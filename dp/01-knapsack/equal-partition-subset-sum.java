@@ -23,7 +23,7 @@ Explanation: The array can be partitioned as [1, 5, 5] and [11].
 In a knapsack problem we can either pick the item or not. 
 
 On picking the current item: the sum we will have to search now, will be reduced by the current value.
-On not picking the current: we mark true only if not picking the current we still get a weight j.
+On not picking the current: we mark true only if not picking the current item we still get a weight j.
 Imagine the 2D table created because of this and also looking at the recurrence relation, we can see that at every step
 we are just using values from the previous row. 
 */
@@ -47,7 +47,7 @@ class Solution {
             for(int j = 1; j <= sum; j++) {
                 if(j - nums[i] >= 0) dp[i + 1][j] = dp[i][j - nums[i]] || dp[i][j];
             }            
-            if(dp[i + 1][sum] == true) return true;
+            if(dp[i + 1][sum] == true) return true; // we have found a subset having half the total sum.
         }
         return false;
     }
