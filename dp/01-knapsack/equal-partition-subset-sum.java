@@ -20,7 +20,7 @@ Explanation: The array can be partitioned as [1, 5, 5] and [11].
 
 */
 /*
-In a knapsack problem we can either pick the item or not. 
+In a knapsack problem we can either pick the current item or not. 
 
 On picking the current item: the sum we will have to search now, will be reduced by the current value.
 On not picking the current: we mark true only if not picking the current item we still get a weight j.
