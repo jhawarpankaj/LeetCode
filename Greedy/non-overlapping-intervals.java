@@ -21,6 +21,30 @@ This is similar to the arrow burst problem. If we can group the overlapping inte
 number of non-overlapping intervals.
 */
 
+// SORTING ON START TIME:
+
+class Solution {
+    public int eraseOverlapIntervals(int[][] intervals) {
+        if(intervals.length == 0) return 0;
+        Arrays.sort(intervals, (a, b) -> {
+           return a[0] - b[0]; 
+        });
+        int minEndTime = intervals[0][1], count = 0;
+        for(int i = 0; i < intervals.length; i++) {
+            int currStartTime = intervals[i][0];
+            int currEndTime = intervals[i][1];
+            if(currStartTime >= minEndTime) minEndTime = currEndTime;
+            else {
+                count++;
+                minEndTime = Math.min(minEndTime, currEndTime);
+            }
+        }
+        return count - 1;
+    }
+}
+
+// SORTING ON END TIME:
+
 class Solution {
     public int eraseOverlapIntervals(int[][] intervals) {
         if(intervals.length == 0) return 0;
