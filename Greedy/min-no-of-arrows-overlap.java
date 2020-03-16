@@ -24,6 +24,30 @@ One way is to shoot one arrow for example at x = 6 (bursting the balloons [2,8] 
 (bursting the other two balloons).
 */
 
+// SORTING ON START TIME:
+
+class Solution {
+    public int findMinArrowShots(int[][] points) {
+        if(points.length == 0) return 0;
+        Arrays.sort(points, (a, b) -> {
+           return a[0] - b[0]; 
+        });
+        int minEndTime = points[0][1], count = 1;
+        for(int i = 0; i < points.length; i++) {
+            int currStart = points[i][0];
+            int currEnd = points[i][1];
+            if(currStart <= minEndTime) minEndTime = Math.min(minEndTime, currEnd);
+            else {
+                count++;
+                minEndTime = currEnd;
+            }
+        }
+        return count;
+    }
+}
+
+// SORTING ON END TIME:
+
 /*
 1. We actually have to group mutually overlapping intervals (kind of connected components in a graph).
 2. To check if two events overlap or not, sort them by finish time and check:
