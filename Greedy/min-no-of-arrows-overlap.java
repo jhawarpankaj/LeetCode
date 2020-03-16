@@ -24,8 +24,6 @@ One way is to shoot one arrow for example at x = 6 (bursting the balloons [2,8] 
 (bursting the other two balloons).
 */
 
-
-
 /*
 1. We actually have to group mutually overlapping intervals (kind of connected components in a graph).
 2. To check if two events overlap or not, sort them by finish time and check:
