@@ -75,8 +75,15 @@ class Solution {
         for(int i = 0; i < n; i++) {
             surplus += (gas[i] - cost[i]);
             if(surplus < 0) {
+                // We will now try with the next node as the start node.
+                // Why not any of the nodes in between couldn't be the start node. 
+                // Not possible, because all will finally end up having this negative value on reaching this node.
                 start = i + 1;
-                deficit += surplus;
+                // we add it to deficit because we make surplus = 0 whenever this if loop executes.
+                // The deficit keeps a track of the entire deficit seen till this node.
+                deficit += surplus; 
+                // As this is the new start node. Its like starting the problem from this node. (and anyways 
+                // we have a back up of the total deficit till now).
                 surplus = 0;
             }
         }
