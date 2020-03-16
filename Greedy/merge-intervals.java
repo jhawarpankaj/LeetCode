@@ -29,7 +29,8 @@ class Solution {
         result.add(intervals[0]);
         
         // Find total overlapping events. If the current element is greater than the last elem end time, then no overlap.
-        // Else, its an overlap and we need the min start and max end time to get the total overlap. (as start time is alreay sorted, we just check the finish time).
+        // Else, its an overlap and we need the min start and max end time to get the total overlap. 
+        // (as start time is alreay sorted, we just check the finish time).
         
         for(int i = 1; i < intervals.length; i++) {
             int currStartTime = intervals[i][0];
