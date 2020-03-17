@@ -54,6 +54,33 @@ class Solution {
     }
 }
 
+// Similar solution by the logic of including/not-including each element.
+class Solution {
+    public List<List<Integer>> subsets(int[] nums) {
+        int N = nums.length;
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        List<Integer> temp = new ArrayList<Integer>();
+        recurse(0, temp, nums, result);
+        return result;
+    }
+    
+    void recurse(int ind, List<Integer> temp, int[] nums, List<List<Integer>> result) {
+        if(ind == nums.length) {
+            result.add(new ArrayList<Integer>(temp));
+            return;
+        }        
+        // Note: we can also recurse first for empty and then the element. 
+        // How the contents of temp variable get modified during recursion?
+        // All calls to recursion adds an element to temp and then remove it.
+        // So when the first call to recursion returns temp will only contain that one added element.
+        temp.add(nums[ind]);       
+        recurse(ind + 1, temp, nums, result);
+        temp.remove(temp.size() - 1);        
+        recurse(ind + 1, temp, nums, result);
+    }
+    
+}
+
 // Another approach is generating all binary sequences.
 
 class Solution {
