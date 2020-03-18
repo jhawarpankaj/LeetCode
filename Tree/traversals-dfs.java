@@ -47,31 +47,28 @@ class Solution {
 class Solution {
     public List<Integer> postorderTraversal(TreeNode root) {
         List<Integer> result = new ArrayList<Integer>();
+        if(root == null) return result;
         Stack<TreeNode> stack = new Stack<TreeNode>();
         TreeNode curr = root;
-        while(curr != null || !stack.isEmpty()){
-            
-            // Exhaust LEFT
-            while(curr != null){
+        while(curr != null || !stack.isEmpty()) {
+            while(curr != null) {
                 stack.push(curr);
                 curr = curr.left;
             }
-            
-            // IF RIGHTs there, go to RIGHT
-            TreeNode temp = stack.peek().right;
-            if(temp != null) curr = temp;
-            
-            // ELSE print DATA
-            else{
-                temp = stack.pop();
-                result.add(temp.val);
-                
-                // If the recent popped was the right child of parent, then
-                // time for the parent also to get popped.
-                while(!stack.isEmpty() && stack.peek().right == temp){
-                    temp = stack.pop();
-                    result.add(temp.val);
+            curr = stack.peek();
+            // If right is there, we have to go there, otherwise,
+            // we pop the current element, but we also need to check if the popped one was the right child
+            // of the top of the stack.
+            if(curr.right != null) curr = curr.right;
+            else {
+                curr = stack.pop();
+                result.add(curr.val);
+                while(!stack.isEmpty() && stack.peek().right == curr) {
+                    curr = stack.pop();
+                    result.add(curr.val);
                 }
+                curr = null; // as we wanted to pop the next element from stack. 
+                            // If not made null, it will infinte loop.
             }
         }
         return result;
