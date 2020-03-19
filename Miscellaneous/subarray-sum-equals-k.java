@@ -35,18 +35,18 @@ sum[i] - sum[j] = sum[i] - (sum[i] - k) = k. And sum[i] - sum[j] is the sum of t
 
 class Solution {
     public int subarraySum(int[] nums, int k) {
-        Map<Integer, Integer> hm = new HashMap<Integer, Integer>();
-        hm.put(0, 1);
-        int currSum = 0, res = 0;
-        for(int i = 0; i < nums.length; i++){
-            currSum+=nums[i];
-            if(hm.containsKey(currSum - k)){
-                int c = hm.get(currSum - k);
-                res = res + c;
+        Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+        map.put(0, 1); // there is one array whose sum = 0, i.e., [].
+        int currSum = 0, count = 0;
+        for(int i = 0; i < nums.length; i++) {
+            currSum += nums[i];
+            if(map.containsKey(currSum - k)) {
+                // Lets say the value of map.get(currSum - k) = 3, this means that there are 
+                // 3 subarrays (0, j) where j < i and sum(0, j) = currSum - k.
+                count += map.get(currSum - k);
             }
-            int temp = hm.getOrDefault(currSum, 0);
-            hm.put(currSum, temp + 1);
+            map.put(currSum, map.getOrDefault(currSum, 0) + 1);
         }
-        return res;
+        return count;
     }
 }
