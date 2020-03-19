@@ -13,6 +13,8 @@ The range of numbers in the array is [-1000, 1000] and the range of the integer 
 
 /*
 Before moving on to this we need understand the concept of RANGE QUERIES or PREFIX SUM.
+Watch: https://www.youtube.com/watch?v=pVS3yhlzrlQ
+
 Given an array: [6, 3, -2, 4, -1, 0, -5], how can we efficiently return the results of the subarray sum queries like:
 sum(0, 6) or sum(0, 4) or sum(2, 3) or sum(3, 5) and so on.
 1. Naive way is to run the loop every time and return the result. But what if there are millions of such queries?
