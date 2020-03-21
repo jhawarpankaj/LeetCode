@@ -16,6 +16,9 @@ Input: [1,2,3,4,5]
 Output: [[4,5,3],[2],[1]]
 */
 
+// The height from top will be different for the leaf nodes.
+// If we start the heights from bottom, all leaf will be at 0 level, then second layers of non-leaf at 1 and so on.
+
 class Solution {
     public List<List<Integer>> findLeaves(TreeNode root) {
         List<List<Integer>> result = new ArrayList<List<Integer>>();
@@ -31,6 +34,3 @@ class Solution {
         return depth;
     }
 }
-
-// This was just an implementation of calculating height of a binary tree.
-// All nodes at same height will be part of a list.
