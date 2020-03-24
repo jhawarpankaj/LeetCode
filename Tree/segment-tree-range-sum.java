@@ -59,16 +59,14 @@ class NumArray {
         for(int i = n - 1, j = tree.length - 1; i >= 0; i--, j--){
             tree[j] = nums[i];
         }
-        for(int i = tree.length - n - 1; i > 0; i--){
+        for(int i = n - 1; i > 0; i--){
             tree[i] = tree[2 * i] + tree[2 * i + 1];
         }
     }
     
     public void update(int i, int val) {
-        int pos = i + n;        
+        int pos = i + n; // (2n - n + i), the corresponding position in segment tree.        
         int diff = val - tree[pos];
-        tree[pos] = val;
-        pos = pos / 2;
         while(pos > 0){
             tree[pos] = tree[pos] + diff;
             pos = pos / 2;
@@ -76,8 +74,8 @@ class NumArray {
     }
     
     public int sumRange(int i, int j) {
-        int p = i + n;
-        int q = j + n;
+        int p = i + n; // (2n - n + i)
+        int q = j + n; // (2n - n + j)
         int sum = 0;
         while(p <= q){
             // To check if p is right child of a parent
