@@ -47,6 +47,8 @@ class Solution {
         // if(visited[i][j]) return false;
         // visited[i][j] = true;
         board[i][j] ='#';
+      
+        // Note that below are short circuit calls, if any of these gets true, the successive calls are not made.
         boolean flag = dfs(board, i + 1, j, word, ind + 1) || 
             dfs(board, i - 1, j, word, ind + 1) ||
             dfs(board, i, j - 1, word, ind + 1)||
