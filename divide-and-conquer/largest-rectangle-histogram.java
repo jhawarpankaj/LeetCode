@@ -74,3 +74,54 @@ class Solution {
         return index;
     }
 }
+
+// Stack based O(n) solution...
+
+/* Idea is:
+    1. For every height we need to know:
+        a) its right range (i.e., how many boxes it can go to its right).
+        b) its left range (i.e., how many boxes it can cover on its left).
+    2. But as we need an O(n) solution, while we are at a box i, we cannot look forward or backward.
+    3. Giving a thought, the right range of any box is when it encounters a box smaller than it's own height.
+    4. If we iterate the array and keep adding heights as long as we see a bigger height, and on finding a height 
+       smaller or EQUAL than the last height, we pop the last height, and calculate it's left and right ranges and update 
+       the global max.
+    5. Repeat the above process for entire array.
+    6. Getting right range is simple: (current height index - the stack.peek()'s height)
+    7. Getting left range: peek after a stack pop (i.e., one before).
+    8. An example: Say current height index is 5 and stack.peek() is 3 and stack.peek.peek() is 1. The range for stack.peek 
+        is 3 boxes, i.e., index 2, index 3 and index 4. So the formula is (5 - 3) + (3 - 1) - 1. 
+        [Notice the minus 1 because 3 is counted twice].
+    9. A special case when there is no stack.peek.peek if we want to use the above generic formula always. 
+        (5 - 3) + (3 - 0) - 1. which gives 4 but the answer should be 5. If stack is empty, it means we need to consider 
+        the elem 0 as well, hence a -1 for empty stack.
+    
+    Once the array iteration is complete.
+    1. The element at the top of stack will always be the last element. If it was the greatest, it stays at the top or 
+    if it was <=, it will remove all the previous once and stays at top. So the right index is fixed, i.e., height.length.
+*/
+
+class Solution {
+    public int largestRectangleArea(int[] heights) {
+        if(heights.length == 0) return 0;
+        Stack<Integer> stack = new Stack<Integer>();
+        stack.push(0);
+        int max = Integer.MIN_VALUE;
+        for(int i = 1; i < heights.length; i++) {
+            while(!stack.isEmpty() && heights[stack.peek()] >= heights[i]) {
+                int curr = stack.pop();
+                int rightRange = i - curr;
+                int leftRange = curr - (stack.isEmpty() ? -1 : stack.peek()); // minus 1 to consider the 0th element also in case stack is empty.
+                max = Math.max(max, heights[curr] * (rightRange + leftRange - 1));
+            }
+            stack.push(i);
+        }
+        while(!stack.isEmpty()) {
+            int curr = stack.pop();
+            int rightRange = heights.length - curr; // as the top will always be the last element here.
+            int leftRange = curr - (stack.isEmpty() ? -1 : stack.peek());
+            max = Math.max(max, heights[curr] * (rightRange + leftRange - 1));
+        }
+        return max;
+    }
+}
