@@ -99,6 +99,9 @@ class Solution {
     Once the array iteration is complete.
     1. The element at the top of stack will always be the last element. If it was the greatest, it stays at the top or 
     if it was <=, it will remove all the previous once and stays at top. So the right index is fixed, i.e., height.length.
+    
+    Note: Even after removing the equal height element we will not have any problem as the other box of equal height 
+    will take care of its range.
 */
 
 class Solution {
@@ -108,14 +111,18 @@ class Solution {
         stack.push(0);
         int max = Integer.MIN_VALUE;
         for(int i = 1; i < heights.length; i++) {
+            // Remove as long as we keep seeing a greater or equal element than the current element.
+            // This i is the end of the right range for all such heights.
             while(!stack.isEmpty() && heights[stack.peek()] >= heights[i]) {
                 int curr = stack.pop();
                 int rightRange = i - curr;
                 int leftRange = curr - (stack.isEmpty() ? -1 : stack.peek()); // minus 1 to consider the 0th element also in case stack is empty.
                 max = Math.max(max, heights[curr] * (rightRange + leftRange - 1));
             }
+            // After pushing this, it is always ensured that stack is always monotonically increasing.
             stack.push(i);
         }
+        // This is a monotonically increasing stack.
         while(!stack.isEmpty()) {
             int curr = stack.pop();
             int rightRange = heights.length - curr; // as the top will always be the last element here.
