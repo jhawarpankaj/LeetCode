@@ -72,7 +72,8 @@ public class AvoidRoads {
 	
 	public static void main(String[] args) {
 		AvoidRoads obj = new AvoidRoads();
-		String[] bad = new String[] {"0 2 0 3", "1 2 1 3", "2 2 2 3", "3 2 3 3", "4 2 4 3", "5 2 5 3", "6 2 6 3", "7 2 7 3", "8 2 8 3", "9 2 9 3"};
+		String[] bad = new String[] {"0 2 0 3", "1 2 1 3", "2 2 2 3", "3 2 3 3", "4 2 4 3", "5 2 5 3", "6 2 6 3", 
+					     "7 2 7 3", "8 2 8 3", "9 2 9 3"};
 		System.out.println("Ways: " + obj.numWaysSpaceEfficient(10, 100, bad));
 	}
 	
@@ -128,7 +129,7 @@ public class AvoidRoads {
 			for(int j = 1; j < ht; j++) {
 				if(isBadPath(i - 1, j, i, j, set)) arr[j] = 0; // if no path from top cell to current cell.
 				if(!isBadPath(i, j - 1, i, j, set)) arr[j] += arr[j - 1]; // if there is a path from left cell to current cell.
-																		// if no path, then need not add left cell's value.
+											  // if no path, then need not add left cell's value.
 			}
 		}		
 		return arr[ht - 1];
