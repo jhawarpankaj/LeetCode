@@ -75,13 +75,14 @@ class Solution {
 
 class Solution {
     public int rob(int[] nums) {
-        int prev = 0, prevPrev = 0, current = 0;
-        for(int i = 0; i < nums.length; i++) {
-            current = Math.max(nums[i] + prevPrev, prev);
-            prevPrev = prev;
-            prev = current;
+        if (nums.length == 0) return 0;
+        int with = nums[0], without = 0;
+        for (int i = 1; i < nums.length; i++) {
+            int temp = with;
+            with = nums[i] + without; // picking curr elem, so cannot pick last elem.
+            without = Math.max(temp, without); // if not picking curr elem, will pack the max of prev (with, without).
         }
-        return current;
+        return Math.max(with, without);
     }
 }
 
