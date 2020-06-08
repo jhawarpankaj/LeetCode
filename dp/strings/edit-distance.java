@@ -22,35 +22,51 @@ rose -> ros (remove 'e')
 
 /*
 
-Idea is if:
-
-a) Last 2 characters are same there can be 3 scenarios:
-    i) We don't need any conversion for that last character and hence L[i + 1][j + 1] = L[i][j];
-    ii) Search for min edit distance in L[i + 1][j] (i.e., one less character of word2, which we can insert later).
-    iii) Search for min edit distance in L[i][j + 1] (i.e., one less character of word1, which we can delete later).
-    
-    Since, we need to find the min edit distance, we take a min of all three.
-    
-b) Similar is the idea in case when the last character is not same, i.e., 
-   we can either replace, insert or delete the last character and then find the min.
-
-*/
-
+// DP. 
+// We find a solution for dp[i][j] where i is for word1 and j for word2.
+// case a) dp[i][j] = dp[i - 1][j - 1] , if char(i) == char(j)
+// case b) dp[i][j] = 1 + Math.min(dp[i - 1][j - 1], 1 + Math.min(dp[i - 1][j], dp[i][j  -1])), if char(i) != char(j).
+// In case b, we pick the best answer among:
+// not selecting both, selecting only i, or selecting only j. Selecting both is not an option.
 
 class Solution {
     public int minDistance(String word1, String word2) {
-        int m = word1.length();
-        int n = word2.length();
-        int[][] L = new int[m + 1][n + 1];
-        L[0][0] = 0;
-        for(int i = 0; i < m; i++) L[i + 1][0] = i + 1;
-        for(int i = 0; i < n; i++) L[0][i + 1] = i + 1;
-        for(int i = 0; i < m; i++) {
-            for(int j = 0; j < n; j++) {
-                if(word1.charAt(i) == word2.charAt(j)) L[i + 1][j + 1] = Math.min(L[i][j], 1 + Math.min(L[i + 1][j], L[i][j + 1]));
-                else L[i + 1][j + 1] = 1 + Math.min(L[i][j], Math.min(L[i + 1][j], L[i][j + 1]));
+        int n1 = word1.length();
+        int n2 = word2.length();
+        int[][] dp = new int[n1 + 1][n2 + 1];
+        for (int i = 0, j = 1; j <= n2; j++) dp[i][j] = j;
+        for (int i = 1, j = 0; i <= n1; i++) dp[i][j] = i;
+        dp[0][0] = 0;
+        for (int i = 1; i <= n1; i++) {
+            for (int j = 1; j <= n2; j++) {
+                if (word1.charAt(i - 1) == word2.charAt(j - 1)) dp[i][j] = dp[i - 1][j - 1];
+                else dp[i][j] = 1 + Math.min(dp[i - 1][j - 1], Math.min(dp[i][j - 1], dp[i - 1][j]));
             }
         }
-        return L[m][n];
+        return dp[n1][n2];
+    }
+}
+
+// Space Optimized DP.
+// we need values only from the (i - 1)th row. So we will update the same array.
+// the already present value in the array represent value of dp[i - 1] row. 
+// We will loose the value of dp[i - 1][j - 1] as we update the dp array. So we will store that in a temp variable.
+class Solution {
+    public int minDistance(String word1, String word2) {
+        int n1 = word1.length();
+        int n2 = word2.length();
+        int[] dp = new int[n2 + 1];
+        for (int j = 1; j <= n2; j++) dp[j] = j;
+        for (int i = 1; i <= n1; i++) {
+            dp[0] = i;
+            int last = i - 1;
+            for (int j = 1; j <= n2; j++) {
+                int temp = dp[j];
+                if (word1.charAt(i - 1) == word2.charAt(j - 1)) dp[j] = last;
+                else dp[j] = 1 + Math.min(last, Math.min(dp[j], dp[j - 1]));
+                last = temp;
+            }
+        }
+        return dp[n2];
     }
 }
