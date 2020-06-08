@@ -17,10 +17,7 @@ Explanation:
 horse -> rorse (replace 'h' with 'r')
 rorse -> rose (remove 'r')
 rose -> ros (remove 'e')
-
 */
-
-/*
 
 // DP. 
 // We find a solution for dp[i][j] where i is for word1 and j for word2.
