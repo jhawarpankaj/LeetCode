@@ -14,7 +14,7 @@ Output: "bb"
 
 */
 
-// Calculate all sized length strings.
+// DP. Calculate all sized length strings.
 
 class Solution {
     public String longestPalindrome(String s) {
@@ -46,6 +46,63 @@ class Solution {
                         max = j - i + 1;
                     }
                 }
+            }
+        }
+        
+        return s.substring(start, start + max);
+    }
+}
+
+// DP, building bottom up using recurrence:
+// dp[i][j] = true, if (char[i] == char[j] && dp[i + 1][j - 1] == true), len = j - i + 1;
+//                  else false.
+
+class Solution {
+    public String longestPalindrome(String s) {
+        int n = s.length();
+        if (n == 0) return "";
+        int max = 1, start = 0; 
+        boolean[][] dp = new boolean[n][n];
+        for (int i = n - 1; i >= 0; i--) {
+            dp[i][i] = true;
+            for (int j = i + 1; j < n; j++) {
+                if (s.charAt(i) == s.charAt(j)) {
+                    if (j == i + 1 || dp[i + 1][j - 1]) {
+                        dp[i][j] = true;
+                        if (j - i + 1 > max) {
+                            max = j - i + 1;
+                            start = i;    
+                        }   
+                    }
+                }
+            }
+        }
+        return s.substring(start, start + max);
+    }
+}
+
+// Space optimize DP.
+class Solution {
+    public String longestPalindrome(String s) {
+        if (s == null || s.isEmpty()) return "";
+        int n = s.length();
+        int start = 0, max = 1;
+        boolean[] dp = new boolean[n];
+        
+        for (int i = n - 1; i >= 0; i--) {
+            boolean next = true;
+            dp[i] = true;
+            for (int j = i + 1; j < n; j++) {
+                boolean temp = dp[j];
+                if (s.charAt(i) == s.charAt(j) && next) {
+                    dp[j] = true;
+                    if (j - i + 1 > max) {
+                        max = j - i + 1;
+                        start = i;
+                    }
+                }
+                else dp[j] = false;
+                next = temp;
             }
         }
         
