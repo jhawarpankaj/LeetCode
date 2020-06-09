@@ -86,3 +86,58 @@ class Solution {
 		System.out.print(Arrays.toString(c));
 	}
 }
+
+// Longest Common Substring...
+// An important difference between subsequence and substring is the case dp[i][j - 1] and dp[i - 1][j].
+// In substring we cannot consider these cases, as both of these will not include one char, which will result in NOT A SUBSTRING.
+// So, whenver it matches, we can use dp[i - 1][j - 1].
+// When it does not, it means dp[i][j] = 0. Note that we will not use the value of dp[i - 1][j - 1], as if we get next matching char,
+// it will add one to this, which is incorrect.
+
+public class LongestCommonSubstring {
+
+	public static void main(String[] args) {
+		String X = "OldSite:GeeksforGeeks.org";
+		String Y = "NewSite:GeeksQuiz.com";
+		System.out.println("Length of Longest Common Substring is " + LCS(X, Y));
+		System.out.println("Length of Longest Common Substring is " + LCSSpaceOptimized(X, Y));
+	}
+
+	public static int LCS(String text1, String text2) {
+		int n1 = text1.length();
+		int n2 = text2.length();
+		int max = 0;
+		int[][] dp = new int[n1 + 1][n2 + 1];
+
+		for (int i = 1; i <= n1; i++) {
+			for (int j = 1; j <= n2; j++) {
+				if (text1.charAt(i - 1) == text2.charAt(j - 1)) {
+					dp[i][j] = 1 + dp[i - 1][j - 1];
+					max = Math.max(max, dp[i][j]);
+				}
+			}
+		}
+		return max;
+	}
+
+	public static int LCSSpaceOptimized(String text1, String text2) {
+		int n1 = text1.length();
+		int n2 = text2.length();
+		int max = 0;
+		int[] dp = new int[n2 + 1];
+		for (int i = 1; i <= n1; i++) {
+			int last = 0;
+			for (int j = 1; j <= n2; j++) {
+				int temp = dp[j];
+				if (text1.charAt(i - 1) == text2.charAt(j - 1)) {
+					dp[j] = 1 + last;
+					max = Math.max(max, dp[j]);
+				}
+				last = temp;
+			}
+		}
+		return max;
+	}
+}
+
+
