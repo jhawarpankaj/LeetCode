@@ -17,20 +17,49 @@ Explanation: The longest common subsequence is "ace" and its length is 3.
 
 */
 
+// DP.
 class Solution {
-    
-    // This just returns the length of LCS.
     public int longestCommonSubsequence(String text1, String text2) {
-        int[][] dp = new int[text1.length() + 1][text2.length() + 1];
-        for(int i = 0; i < text1.length(); i++) {
-            for(int j = 0; j < text2.length(); j++) {
-                // dp[i + 1][j + 1] is for char i and j.
-                if(text1.charAt(i) == text2.charAt(j)) dp[i + 1][j + 1] = 1 + dp[i][j]; 
-                else dp[i + 1][j + 1] = Math.max(dp[i + 1][j], dp[i][j + 1]);
+        int n1 = text1.length();
+        int n2 = text2.length();
+        int[][] dp = new int[n1 + 1][n2 + 1];
+        for (int i = 1, j = 0; i <= n1; i++) dp[i][j] = 0;
+        for (int i = 0, j = 1; j <= n2; j++) dp[i][j] = 0;        
+        dp[0][0] = 0;
+        for (int i = 1; i <= n1; i++) {
+            for (int j = 1; j <= n2; j++) {
+                if (text1.charAt(i - 1) == text2.charAt(j - 1)) dp[i][j] = 1 + dp[i - 1][j - 1];
+                else dp[i][j] = Math.max(dp[i][j - 1], dp[i - 1][j]);
             }
         }
-        return dp[text1.length()][text2.length()];
+        return dp[n1][n2];
     }
+}
+
+// Space Optimized DP. As we can see, we always need the last modified array.
+// We can update the same array.
+// For linear space explanation: https://www.youtube.com/watch?time_continue=1556&v=DuikFLPt8WQ&feature=emb_title
+class Solution {
+    public int longestCommonSubsequence(String text1, String text2) {
+        int n1 = text1.length();
+        int n2 = text2.length();
+        int[] dp = new int[n2 + 1];
+        // we are filling this for the first row when i = 0
+        for (int j = 1; j <= n2; j++) dp[j] = 0;
+        for (int i = 1; i <= n1; i++) {
+            int prev = 0;
+            for (int j = 1; j <= n2; j++) {
+                int backup = dp[j];
+                if (text1.charAt(i - 1) == text2.charAt(j - 1)) dp[j] = 1 + prev;
+                // here dp[j] = dp[i - 1][j - 1], as the value of dp[j] has not yet been updated.
+                // and dp[j - 1] = dp[i][j - 1]
+                else dp[j] = Math.max(dp[j], dp[j - 1]);
+                prev = backup;
+            }
+        }
+        return dp[n2];
+    }
+}
     
     // This prints the LCS.
     // Watch: https://www.youtube.com/watch?time_continue=1556&v=DuikFLPt8WQ&feature=emb_title
@@ -54,36 +83,6 @@ class Solution {
 			else if(dp[i][j - 1] > dp[i - 1][j]) j--;
 			else i--;
 		}
-		for(int k = 0;k < c.length; k++) 
-            System.out.print(c[k]);
+		System.out.print(Arrays.toString(c));
 	}
-}
-
-/*
-Space efficient approach: In the above implementation, we can see that at every iteration, we only need the values:
-dp[i + 1][j] and dp[i][j + 1] OR dp[i][j]
-
-Imagine these values as a row in a 2D matrix, we want to calculate dp[i + 1][j + 1] and the required values are among the 
-adjacent value or one row above. So we just need only these values.
-
-For linear space explanation: https://www.youtube.com/watch?time_continue=1556&v=DuikFLPt8WQ&feature=emb_title
-*/
-
-class Solution {
-    public int longestCommonSubsequence(String text1, String text2) {
-        int[] dp = new int[text2.length() + 1];
-        int temp = 0, prev = 0;
-        for(int i = 0; i < text1.length(); i++) {
-            temp = 0;
-            for(int j = 0; j < text2.length(); j++) {
-                // this for storing the current value which will be needed in next iteration as this is
-                // going to be changed in this iteration.
-                prev = dp[j + 1]; 
-                if(text1.charAt(i) == text2.charAt(j)) dp[j + 1] = temp + 1;
-                else dp[j + 1] = Math.max(dp[j + 1], dp[j]);
-                temp = prev;
-            }         
-        }
-        return dp[text2.length()];
-    }
 }
