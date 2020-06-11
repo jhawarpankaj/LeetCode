@@ -24,7 +24,9 @@ rose -> ros (remove 'e')
 // case a) dp[i][j] = dp[i - 1][j - 1] , if char(i) == char(j)
 // case b) dp[i][j] = 1 + Math.min(dp[i - 1][j - 1], 1 + Math.min(dp[i - 1][j], dp[i][j  -1])), if char(i) != char(j).
 // In case b, we pick the best answer among:
-// not selecting both, selecting only i, or selecting only j. Selecting both is not an option.
+// dp[i - 1][j - 1]: replacing the character.
+// dp[i][j - 1]: inserting the jth character of word2.
+// dp[i - 1][j] : deleting the ith character of word1.
 
 class Solution {
     public int minDistance(String word1, String word2) {
