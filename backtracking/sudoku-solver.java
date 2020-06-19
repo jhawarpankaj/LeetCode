@@ -11,60 +11,62 @@ Each of the the digits 1-9 must occur exactly once in each of the 9 3x3 sub-boxe
 Empty cells are indicated by the character '.'.
 */
 
+/*
+General backtracking principle: 
+1. Find all possible values for a cell.
+2. Try each one of them one by one.
+*/
+
+
 class Solution {
     public void solveSudoku(char[][] board) {
         bt(board, 0, 0);
     }
     
-    private static boolean bt(char[][] arr, int row, int col) {
+    public boolean bt(char[][] board, int row, int col) {
         
-        int j = col;
-        for(int i = row; i < arr.length; i++) {
-            for(; j < arr.length; j++) {
-                if(arr[i][j] != '.') continue;
-                Set<Character> set = getAvailable(arr, i, j);
-                for(char c : set) {
-                    arr[i][j] = c;
-                    if(bt(arr, i, j)) return true;
-                    arr[i][j] = '.';
+        // whenever a row moves on to then next row, then only we should make col j = 0;
+        for (int i = row, j = col; i < board.length; i++, j = 0) {
+            for (; j < board[i].length; j++) {                
+                if (board[i][j] != '.') continue;
+                for (char c : getAvailable(board, i, j)) {
+                    board[i][j] = c;
+                    if(bt(board, i, j + 1)) return true;
+                    board[i][j] = '.';
                 }
-                // If we reach here, it tells:
-                // 1. The current cell was a '.'
-                // 2. We exhausted all the available numbers for this cell (or there were no numbers 
+                // If we reach here, means that the current cell was a '.' and
+                // 1. We exhausted all the available numbers for this cell (or there were no numbers 
                 //    for this location, i.e., set was empty)
-                // 3. The code should never reach here, if we are here it means there is no solution.
+                // 2. The code should never reach here, if we are here it means there is no solution.
                 return false;
             }
-            j = 0; // if last element of a row, then move to the beginning of next row.
-        }        
+        }
         return true;
     }
     
-    private static Set<Character> getAvailable(char[][] arr, int row, int col) {
-        Set<Character> set = new HashSet<Character>();
-        for(int i = 0; i < arr.length; i++) {
-            set.add(arr[row][i]);
-            set.add(arr[i][col]);
-        }
-        
-        // The 9X9 grid is encoded to numbers from 0 to 8, one number for each 3 X 3 cell.
-        // That will help to know the start of each small 3 X 3 cell (from there we know that we have to iterate for the 3 X 3 cell).
-        // 1. As we want to give incremental numbering, we know that whenever we move one row down, that will a (+3) for each row.
-        // Hence multiply the row by 3.
-        // 2. For every column, we know that it's plus 1 (to the old row value).
-        
-        int encode = (row / 3) * 3 + col / 3;
-        for(int i = encode - (encode % 3), k = 0; k < 3; k++) {
-            for(int j = (encode % 3) * 3, l = 0; l < 3; l++) {
-                set.add(arr[i + k][j + l]);
-            }
+    public Set<Character> getAvailable(char[][] board, int row, int col) {
+        Set<Character> set = new HashSet<>();
+        // all elements in row.
+        for (int i = row, j = 0; j < board[0].length; j++) set.add(board[i][j]);
+        // all elements in col.
+        for (int i = 0, j = col; i < board.length; i++) set.add(board[i][j]);
+        // all elements in the small square. 
+        // Given original (i, j), if we can find the starting (i, j) of the small square, we can iterate easily.
+        // We can see that the entire sudoku is divided in small blocks.
+        // Beginning of each row can be in BLOCK 1, BLOCK 2, or BLOCK 3. Same for column.
+        // (row + 1) / 3 will give the BLOCK of row but that will be BLOCK 1, 2, 3. We need in terms of 0 indexing.
+        // So, we can just subtract 1. And again, multiply by 3 will give exact row of small square beginning.
+        int scaledRow = (int)(Math.ceil((row + 1) / 3.0) - 1) * 3;
+        int scaledCol = (int)(Math.ceil((col + 1) / 3.0) - 1) * 3;        
+        for (int i = scaledRow, j = scaledCol, k = 1; k <= 3; k++, i++) {
+            set.add(board[i][j]);
+            set.add(board[i][j + 1]);
+            set.add(board[i][j + 2]);
         }
         set.remove('.');
-        
-        for(int i = 1; i < 10; i++) {
-            char c = (char) ('0' + i);
-            if(set.contains(c)) set.remove(c);
-            else set.add(c);
+        for (char c = '1'; c <= '9'; c++) {
+            if (!set.contains(c)) set.add(c);
+            else set.remove(c);
         }
         return set;
     }
