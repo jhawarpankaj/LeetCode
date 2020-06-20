@@ -24,55 +24,73 @@ Output: [
 Explanation: There exist two distinct solutions to the 4-queens puzzle as shown above.
 */
 
+/* 
+General backtracking principle again like Sudoku:
+1. Find all possible position of queen in row.
+2. Try each one of them one by one using backtracking.
+*/
+
 class Solution {
     
-    public List<List<String>> solveNQueens(int n) {
-        List<List<String>> res = new ArrayList<>();
-        List<String> temp = new ArrayList<>();
-        int[][] visited = new int[n][n];
-        bt(n, 0, visited, temp, res);
-        return res;
+    public List<List<String>> solveNQueens(int n) {           
+        List<List<String>> result = new ArrayList<>();
+        char[][] board = new char[n][n];
+        for (int i = 0; i < board.length; i++) {
+            Arrays.fill(board[i], '.');
+        }
+        bt(board, result, 0, n);
+        return result;
     }
     
-    // General backtrack principle: 1) Do 2) Recurse 3) Undo
-    void bt(int n, int row, int[][] visited, List<String> temp, List<List<String>> res) {
-        if(row == n) {
-            res.add(new ArrayList<String>(temp));
+    void bt(char[][] board, List<List<String>> result, int row, int n) {
+        if (row == n) {
+            List<String> temp = new ArrayList<>();
+            for (int i = 0; i < n; i++) {
+                StringBuilder sb = new StringBuilder();
+                for (int j = 0; j < n; j++) {
+                    sb.append(board[i][j]);
+                }
+                temp.add(sb.toString());
+            }
+            result.add(temp);
             return;
         }
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < n; i++) sb.append(".");
-        for(int i = 0; i < n; i++) {
-            if(visited[row][i] != 0) continue;
-            sb.setCharAt(i, 'Q');
-            mark(visited, n, row, i, 1);
-            temp.add(new String(sb));
-            bt(n, row + 1, visited, temp, res);
-            temp.remove(temp.size() - 1);
-            mark(visited, n, row, i, -1);
-            sb.setCharAt(i, '.');
-        }
+        List<Character> available = getAvailable(board, row, n);
+        for (int j = 0; j < available.size(); j++) {
+            if (available.get(j).equals('Q')) {
+                board[row][j] = 'Q';
+                bt(board, result, row + 1, n);
+                board[row][j] = '.';
+            }
+        }        
     }
     
-    
-    // Keep a note of only 45, 135 and 90 degree cells from the current position.
-    // Note that space complexity can be reduced by using only 3 arrays (one each for 45, 135, and 90 degree cells)
-    // instead of n^2.
-    void mark(int[][] visited, int n, int i, int j, int val) {
-        int p = i, q = j;
-        while(p < n) {
-            visited[p][q] += val;
-            p++;
+    List<Character> getAvailable(char[][] board, int row, int n) {
+        List<Character> result = new ArrayList<>();        
+        for (int j = 0; j < n; j++) {            
+            int col = j;
+            int rows = row;
+            boolean flag = false;
+            // these loops can be merged into one, using little maths.
+            // not in mood right now tp do the math but see that at every iteration add 1 and subtract 1 or something like that.
+            while (!flag && rows > 0) {
+                if (board[--rows][col] == 'Q') flag = true;
+            }
+            rows = row;
+            col = j;
+            while (!flag && rows > 0 && col > 0) {
+                if (board[--rows][--col] == 'Q') flag = true;
+            }            
+            rows = row;
+            col = j;
+            while (!flag && rows > 0 && col < n - 1) {
+                if (board[--rows][++col] == 'Q') flag = true;
+            }
+            if (!flag) result.add('Q');
+            else result.add('.');
         }
-        p = i;
-        while(p < n && q < n) {
-            visited[p][q] += val;
-            p++; q++;
-        }
-        p = i; q = j;
-        while(p < n && q >= 0) {
-            visited[p][q] += val;
-            p++; q--;
-        }
+        return result;
+        
     }
+    
 }
