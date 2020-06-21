@@ -19,6 +19,12 @@ We could return these lists in any order, for example the answer [['Mary', 'mary
 ['John', 'john00@mail.com', 'john_newyork@mail.com', 'johnsmith@mail.com']] would still be accepted.
 */
 
+/* 
+Idea is to form a graph from the given emails and then simply perform DFS to get all connected components.
+The first question which comes naturally is how to form a graph from the emails.
+It's simple, remember that a HashMap can be used to represent adjacency list for an undirected graph.
+Put the given emails to HashMap and we will get the adjacency list, rest is just DFS.
+*/
 class Solution {
     public List<List<String>> accountsMerge(List<List<String>> accounts) {
         Map<String, ArrayList<String>> graph = new HashMap<>();
@@ -70,61 +76,5 @@ class Solution {
             }
         }
         return result;
-    }
-}
-
-class Solution {
-    public List<List<String>> accountsMerge(List<List<String>> accounts) {
-        
-        Map<String, String> nameMap = new HashMap<String, String>();
-        Map<String, ArrayList<String>> graph = new HashMap<String, ArrayList<String>>();
-        
-        // Build the undirected graph with edges only from the first email id to all other and reverse.
-        // We don't need to have edges between all pairs as we just need to find the connected components.
-        
-        for(List<String> account : accounts) {
-            for(int i = 1; i < account.size(); i++) {
-                String email = account.get(i);
-                nameMap.putIfAbsent(email, account.get(0));
-                
-                
-                
-                graph.computeIfAbsent(account.get(1), x -> new ArrayList<String>()).add(email);
-                graph.computeIfAbsent(email, x -> new ArrayList<String>()).add(account.get(1));
-            }
-        }
-        
-        Set<String> visited = new HashSet<String>();
-        Set<String> allKeys = graph.keySet();
-        Stack<String> stack = new Stack<String>();
-        TreeSet<String> sorted = new TreeSet<String>();
-        List<List<String>> result = new ArrayList<List<String>>();
-        LinkedList<String> temp = null;
-        
-        // DFS on each connected components.
-        
-        for(String email : allKeys) {
-            if(!visited.contains(email)) {
-                stack.push(email);
-                String name = nameMap.get(email);
-                
-                while(!stack.isEmpty()) {
-                    String top = stack.pop();
-                    sorted.add(top);
-                    visited.add(top);
-                    for(String adj : graph.get(top)) {
-                        if(!visited.contains(adj)) stack.push(adj);
-                    }
-                }
-                
-                temp = new LinkedList<String>(sorted);
-                sorted.clear();
-                temp.addFirst(name);
-                result.add(new ArrayList<String>(temp));
-                temp.clear();
-            }
-        }
-        return result;
-        
     }
 }
