@@ -21,6 +21,60 @@ We could return these lists in any order, for example the answer [['Mary', 'mary
 
 class Solution {
     public List<List<String>> accountsMerge(List<List<String>> accounts) {
+        Map<String, ArrayList<String>> graph = new HashMap<>();
+        Map<String, String> map = new HashMap<>();        
+        // build graph.
+        for (List<String> account : accounts) {
+            String name = account.get(0);
+            for (int i = 1; i < account.size(); i++) {
+                String email = account.get(i);
+                map.putIfAbsent(email, name);                
+                /* 
+                computeIfAbsent: the inner computation will execute if the key is not there,
+                and then the add statement executes, and a (key, value) pairs will be created in the map.
+                In short, it merges the below steps into one:
+                
+                ArrayList<String> temp1 = graph.getOrDefault(account.get(1), new ArrayList<String>());
+                temp1.add(email);
+                graph.put(account.get(1), temp1);                
+                */
+                graph.computeIfAbsent(email, x -> new ArrayList<String>()).add(account.get(1));
+                graph.computeIfAbsent(account.get(1), x -> new ArrayList<>()).add(email);
+            }
+        }
+        Set<String> visited = new HashSet<>();
+        Stack<String> stack = new Stack<>();
+        Set<String> sorted = new TreeSet<>();
+        // note that we cannot use Priority Queue, as it may contain duplicates.
+        // Also recall that a PQ is not sorted, only on calling the PQ.remove() it will give the correct answer and then rearranges the
+        // PQ in logn time.
+        // PriorityQueue<String> PQ = new PriorityQueue<>(); 
+        List<List<String>> result = new ArrayList<>();
+        
+        for (String email : graph.keySet()) {
+            if (!visited.contains(email)) {
+                stack.push(email);
+                while (!stack.isEmpty()) {
+                    String curr = stack.pop();
+                    visited.add(curr);
+                    for (String adj : graph.get(curr)) {
+                        if(!visited.contains(adj)) stack.push(adj);
+                    }
+                    sorted.add(curr);
+                }
+                // ArrayList will shift all the element hence O(n) operation.
+                LinkedList<String> temp = new LinkedList<>(sorted); 
+                temp.addFirst(map.get(email));
+                result.add(temp);
+                sorted.clear();
+            }
+        }
+        return result;
+    }
+}
+
+class Solution {
+    public List<List<String>> accountsMerge(List<List<String>> accounts) {
         
         Map<String, String> nameMap = new HashMap<String, String>();
         Map<String, ArrayList<String>> graph = new HashMap<String, ArrayList<String>>();
@@ -33,15 +87,7 @@ class Solution {
                 String email = account.get(i);
                 nameMap.putIfAbsent(email, account.get(0));
                 
-                /* 
-                computeIfAbsent: the inner computation will execute if the key is not there,
-                and then the add statement executes, and a (key, value) pairs will be created in the map.
-                In short, it merges the below steps into one:
                 
-                ArrayList<String> temp1 = graph.getOrDefault(account.get(1), new ArrayList<String>());
-                temp1.add(email);
-                graph.put(account.get(1), temp1);                
-                */
                 
                 graph.computeIfAbsent(account.get(1), x -> new ArrayList<String>()).add(email);
                 graph.computeIfAbsent(email, x -> new ArrayList<String>()).add(account.get(1));
