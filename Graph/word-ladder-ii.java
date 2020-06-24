@@ -44,6 +44,12 @@ Explanation: The endWord "cog" is not in wordList, therefore no possible transfo
 // However, this is not an optimal solution and result in TLE. See Leetcode Discussion for some optimal solutions. 
 // But this solution is very important to understand DFS, BFS and BACTRACKING.
 
+// First, we need to find the shortest distance to the goal node.
+// Second, as in BFS we do not return back to the original caller, we cannot get the path when we reach the goal. We use a parent pointer for each node to
+// construct the path back once we find goal. Note that a node may have more than one parent.
+// Third, we can observe that we can DFS the parent map from endWord to search for beginWord and with this DFS we can construct the path in reverse.
+// Lastly, as we need to construct all paths, we need to BACKTRACK instead of DFS in above step.
+
 class Solution {
     public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
         List<List<String>> result = new ArrayList<>();
@@ -85,20 +91,21 @@ class Solution {
         }
         if (!flag) return result;
         visited.clear();
-        List<String> temp = new ArrayList<>();
-        temp.add(beginWord);
-        DFS(parent, beginWord, endWord, result, visited, temp, dist);        
+        
+        DFS(parent, beginWord, endWord, result, visited, new ArrayList<String>(), dist);        
         return result;
     }
     
     void DFS(Map<String, ArrayList<String>> parent, String beginWord, String currWord, List<List<String>> result, Set<String> visited, List<String> temp, int shortestDist) {
-        if (currWord.equals(beginWord)) {
+        if (currWord.equals(beginWord)) {            
             List<String> sub = new ArrayList<>();
+            sub.add(beginWord);
             for (int i = temp.size() - 1; i >= 0; i--) sub.add(temp.get(i));
             result.add(sub);
             return;
         }
-        if (temp.size() >= shortestDist) return;
+        // -1 as first elem is the beginWord.
+        if (temp.size() >= shortestDist - 1) return;
         temp.add(currWord);
         visited.add(currWord);
         for (String adj : parent.get(currWord)) {
