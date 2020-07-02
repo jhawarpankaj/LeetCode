@@ -189,3 +189,45 @@ class Solution {
         dfsDown(root.right, K - 1, result);
     }
 }
+
+// Solution 4: Build a graph out of tree.
+class Solution {
+    public List<Integer> distanceK(TreeNode root, TreeNode target, int K) {
+        List<Integer> result = new ArrayList<>();
+        Map<TreeNode, ArrayList<TreeNode>> graph = new HashMap<>();
+        helper(root, graph);
+        Set<TreeNode> visited = new HashSet<>();
+        Queue<TreeNode> Q = new LinkedList<>();
+        Q.add(target);
+        visited.add(target);
+        int level = 0;
+        while (!Q.isEmpty()) {
+            for (int i = Q.size(); i > 0; i--) {
+                TreeNode curr = Q.remove();
+                for (TreeNode adj : graph.getOrDefault(curr, new ArrayList<TreeNode>())) {
+                    if (!visited.contains(adj)) {
+                        visited.add(adj);
+                        Q.add(adj);
+                    }
+                }
+                if (level == K) result.add(curr.val);
+            }
+            level++;
+        }
+        return result;
+    }
+    
+    void helper(TreeNode root, Map<TreeNode, ArrayList<TreeNode>> graph) {
+        if (root == null) return;
+        helper(root.left, graph);
+        helper(root.right, graph);
+        if (root.left != null) {
+            graph.computeIfAbsent(root, x -> new ArrayList<TreeNode>()).add(root.left);
+            graph.computeIfAbsent(root.left, x -> new ArrayList<TreeNode>()).add(root);
+        }
+        if (root.right != null) {
+            graph.computeIfAbsent(root, x -> new ArrayList<TreeNode>()).add(root.right);
+            graph.computeIfAbsent(root.right, x -> new ArrayList<TreeNode>()).add(root);
+        }        
+    }
+}
