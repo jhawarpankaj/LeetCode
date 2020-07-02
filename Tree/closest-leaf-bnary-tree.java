@@ -1,4 +1,5 @@
 /*
+https://leetcode.com/problems/closest-leaf-in-a-binary-tree/
 
 Given a binary tree where every node has a unique value, and a target key k, find the value of the nearest 
 leaf node to target k in the tree.
@@ -22,7 +23,7 @@ Output: 2 (or 3)
 
 Explanation: Either 2 or 3 is the nearest leaf node to the target of 1.
 */
-
+// Solution 1: Building an entire graph out of tree.
 class Solution {
     Map<Integer, ArrayList<TreeNode>> map = new HashMap<Integer, ArrayList<TreeNode>>();
     public int findClosestLeaf(TreeNode root, int k) {
@@ -57,5 +58,54 @@ class Solution {
             map.get(node.val).add(node.right);
             convertToGraph(node.right, node);
         }
+    }
+}
+// Soln 2: Building only a parent path from target to root.
+
+class Solution {
+    public int findClosestLeaf(TreeNode root, int k) {
+        Map<TreeNode, TreeNode> parent = new HashMap<>();
+        TreeNode goal = helper(root, k, parent);
+        Set<TreeNode> visited = new HashSet<>();
+        Queue<TreeNode> Q = new LinkedList<>();
+        visited.add(goal);
+        Q.add(goal);
+        visited.add(null);
+        while (!Q.isEmpty()) {
+            for (int i = Q.size(); i > 0; i--) {
+                TreeNode curr = Q.remove();
+                if (curr.left == null && curr.right == null) return curr.val;
+                if (!visited.contains(curr.left)) {
+                    visited.add(curr.left);
+                    Q.add(curr.left);
+                }
+                if (!visited.contains(curr.right)) {
+                    visited.add(curr.right);
+                    Q.add(curr.right);
+                }
+                TreeNode anc = parent.get(curr);
+                if (!visited.contains(anc)) {
+                    visited.add(anc);
+                    Q.add(anc);
+                }
+            }
+        }
+        return -1;
+    }
+    
+    TreeNode helper(TreeNode root, int k, Map<TreeNode, TreeNode> parent) {
+        if (root == null) return null;
+        if (root.val == k) return root;
+        TreeNode left = helper(root.left, k, parent); 
+        if (left != null) {
+            parent.put(root.left, root);
+            return left;
+        }
+        TreeNode right = helper(root.right, k, parent);
+        if (right != null) {
+            parent.put(root.right, root);
+            return right;
+        }
+        return null;
     }
 }
