@@ -1,4 +1,5 @@
 /*
+https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree/
 
 We are given a binary tree (with root node root), a target node, and an integer value K.
 
@@ -40,50 +41,151 @@ reach back to the parent from the child and also knowing the distance, for which
 goes to the leaves and then percolate back to the parent with the value of the distance from the target.
 */
  
-
+// Solution1: Building a parent map for the entire tree.
 class Solution {
-    List<Integer> ans = new ArrayList<Integer>();
-    TreeNode target;
-    int K;
     public List<Integer> distanceK(TreeNode root, TreeNode target, int K) {
-        this.target = target;
-        this.K = K;
-        dfs(root);
-        return ans;
+        List<Integer> result = new ArrayList<>();
+        Map<TreeNode, TreeNode> parent = new HashMap<>();
+        helper(root, parent);
+        Set<TreeNode> visited = new HashSet<>();
+        Queue<TreeNode> Q = new LinkedList<>();
+        Q.add(target);
+        visited.add(target);
+        visited.add(null);
+        while (!Q.isEmpty()) {
+            for (int i = Q.size(); i > 0; i--) {
+                if (K == 0) {
+                    while (!Q.isEmpty()) result.add(Q.remove().val);
+                    break;
+                }
+                TreeNode curr = Q.remove();
+                if (!visited.contains(curr.left)) {
+                    visited.add(curr.left);
+                    Q.add(curr.left);
+                }
+                if (!visited.contains(curr.right)) {
+                    visited.add(curr.right);
+                    Q.add(curr.right);
+                }
+                if (!visited.contains(parent.get(curr))) {
+                    visited.add(parent.get(curr));
+                    Q.add(parent.get(curr));
+                }
+            }
+            K--;
+        }
+        return result;        
+    }    
+    void helper(TreeNode root, Map<TreeNode, TreeNode> parent) {
+        if (root == null) return;
+        if (root.left != null) parent.put(root.left, root);
+        if (root.right != null) parent.put(root.right, root);
+        helper(root.left, parent);
+        helper(root.right, parent);
+    }
+}
+
+// Solution2: Building parent path only from the target node to the root element.
+// That is the only root, we would need to explore while returning from the goal node.
+class Solution {
+    public List<Integer> distanceK(TreeNode root, TreeNode target, int K) {
+        List<Integer> result = new ArrayList<>();
+        Map<TreeNode, TreeNode> parent = new HashMap<>();
+        helper(root, target, parent);
+        Set<TreeNode> visited = new HashSet<>();
+        visited.add(target);
+        Queue<TreeNode> Q = new LinkedList<>();
+        Q.add(target);
+        visited.add(null);
+        while (!Q.isEmpty()) {
+            for (int i = Q.size(); i > 0; i--) {
+                if (K == 0) {
+                    while (!Q.isEmpty()) result.add(Q.remove().val);
+                    break;
+                }
+                TreeNode curr = Q.remove();
+                if (!visited.contains(curr.left)) {
+                    visited.add(curr.left);
+                    Q.add(curr.left);
+                }
+                if (!visited.contains(curr.right)) {
+                    visited.add(curr.right);
+                    Q.add(curr.right);
+                }
+                TreeNode father = parent.get(curr);
+                if (!visited.contains(father)) {
+                    visited.add(father);
+                    Q.add(father);
+                }
+            }
+            K--;
+        }
+        return result;
     }
     
-    int dfs(TreeNode node){
-        if(node == null) return -1;
-        if(node == target) {
-            // 2.a
-            add_subtree(node, 0);
-            // 2.b
+    TreeNode helper(TreeNode root, TreeNode target, Map<TreeNode, TreeNode> parent) {
+        if (root == null) return null;
+        if (root == target) return target;
+        TreeNode left = helper(root.left, target, parent);
+        if (left != null) {
+            parent.put(root.left, root);
+            return left;            
+        }
+        TreeNode right = helper(root.right, target, parent);
+        if (right != null) {
+            parent.put(root.right, root);
+            return right;
+        }
+        return null;        
+    }    
+}
+
+// Solution3: Avoid using the parent map.
+// Once we reach the target node, finding nodes at K distance below it is straightforward.
+// For Finding nodes K distance above it: After reaching the target node, we can stop the traversal and move upwards, but let the upward call know that we are returning 
+// after finding the target node (as we can return after hitting a null also, we need to differentiate this)
+// We can use, 2 different types of return value for both the above cases, so that we can assess which return call it is.
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public List<Integer> distanceK(TreeNode root, TreeNode target, int K) {
+        List<Integer> result = new ArrayList<>();
+        helper(root, target, result, K);
+        return result;
+    }
+    
+    int helper(TreeNode root, TreeNode target, List<Integer> result, int K) {
+        if (root == null) return -1;
+        if (root == target) {
+            dfsDown(root, K, result);
             return 1;
         }
-        else{
-            int L = dfs(node.left);
-            int R = dfs(node.right);
-            if(L != -1 && L <= K){
-                if(L == K) ans.add(node.val);
-                // the distance K node can be both its parent or on the right subtree. For parent return L + 1.
-                add_subtree(node.right, L + 1);
-                return L + 1;
-            }
-            else if(R != -1 && R <= K){
-                if(R == K) ans.add(node.val);
-                add_subtree(node.left, R + 1);
-                return R + 1;
-            }
-            else return -1;            
+        int left = helper(root.left, target, result, K);
+        if (left != -1) {
+            if (left == K) result.add(root.val);
+            else if (left < K) dfsDown(root.right, K - left - 1, result);
+            return left + 1;
         }
+        int right = helper(root.right, target, result, K);
+        if (right != -1) {
+            if (right == K) result.add(root.val);
+            else if (right < K) dfsDown(root.left, K - right - 1, result);
+            return right + 1;
+        }
+        return -1;
     }
     
-    void add_subtree(TreeNode node, int level){
-        // the condition level > K is used to stop if we 
-        // have already passed the distance from the target.
-        if(node == null || level > K) return; 
-        if(K == level) ans.add(node.val);
-        add_subtree(node.left, level + 1);
-        add_subtree(node.right, level + 1);        
+    void dfsDown(TreeNode root, int K, List<Integer> result) {
+        if (root == null) return;
+        if (K == 0) result.add(root.val);
+        dfsDown(root.left, K - 1, result);
+        dfsDown(root.right, K - 1, result);
     }
 }
