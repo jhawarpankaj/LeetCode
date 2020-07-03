@@ -49,39 +49,25 @@ If the predecessor is also not there, it means it's a leaf node.
 */
 
 class Solution {
-    public TreeNode deleteNode(TreeNode root, int k) {
-        if(root == null) return null;
-        else if(root.val > k) root.left = deleteNode(root.left, k);
-        else if(root.val < k) root.right = deleteNode(root.right, k);
-        else {
-            Integer suc = successor(root.right);
-            if(suc == null) {
-                Integer pred = predecessor(root.left);
-                if(pred == null) return null;
-                else {                    
-                    root.left = deleteNode(root.left, pred);                    
-                    root.val = pred;
-                }
+    public TreeNode deleteNode(TreeNode root, int key) {
+        if (root == null) return null;
+        if (root.val == key) {
+            if (root.left == null && root.right == null) root = null;
+            else if (root.right != null) {
+                TreeNode temp = root.right;
+                while (temp.left != null) temp = temp.left;
+                root.val = temp.val;
+                root.right = deleteNode(root.right, temp.val);         
+            } else {
+                TreeNode temp = root.left;
+                while (temp.right != null) temp = temp.right;
+                root.val = temp.val;
+                root.left = deleteNode(root.left, temp.val);         
             }
-            else {                
-                root.right = deleteNode(root.right, suc);                
-                root.val = suc;
-            }
+            return root;
         }
+        else if (key < root.val) root.left = deleteNode(root.left, key);
+        else root.right = deleteNode(root.right, key);
         return root;
     }
-    
-    Integer successor(TreeNode root) {
-        if(root == null) return null;
-        while(root.left != null) root = root.left;
-        return root.val;
-    }
-    
-    Integer predecessor(TreeNode root) {
-        if(root == null) return null;
-        while(root.right != null) root = root.right;
-        return root.val;
-    }
 }
-
-// 
