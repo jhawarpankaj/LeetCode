@@ -27,21 +27,39 @@ and
     4
  */
  
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+
+// Note that to calculate the serialization of the full tree, we go Preorder/
+// but here we need the serialization of each subtree, that's why we go PostOrder.
 class Solution {
-    Map<String, Integer> map;
-    List<TreeNode> result;
     public List<TreeNode> findDuplicateSubtrees(TreeNode root) {
-        map = new HashMap<String, Integer>();
-        result = new ArrayList<TreeNode>();
-        serialize(root);
+        List<TreeNode> result = new ArrayList<>();
+        Map<String, Integer> map = new HashMap<>();
+        helper(root, map, result);
         return result;
     }
     
-    String serialize(TreeNode root){
-        if(root == null) return "#";
-        String serial = root.val + "," + serialize(root.left) + "," + serialize(root.right);
-        if(map.getOrDefault(serial, 0) == 1) result.add(root);
-        map.put(serial, map.getOrDefault(serial, 0) + 1);
-        return serial;
+    String helper(TreeNode root, Map<String, Integer> map, List<TreeNode> result) {
+        if (root == null) return "#";
+        String left = helper(root.left, map, result);
+        String right = helper(root.right, map, result);
+        String curr = root.val + "," + left + "," + right;
+        map.put(curr, map.getOrDefault(curr, 0) + 1);
+        if (map.get(curr) == 2) result.add(root);
+        return curr;
     }
 }
