@@ -20,6 +20,8 @@ Each node will have value between 0 and 100.
 The given tree is a binary search tree.
 */
 
+// The problem is simple, it just needs to identify the traversal type. We can see that it needs RDL, that's sort of revresed inorder.
+
 // Recursive
 class Solution {
     int temp = 0;
