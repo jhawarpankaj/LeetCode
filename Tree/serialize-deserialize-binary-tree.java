@@ -2,47 +2,49 @@
 
 // https://leetcode.com/problems/serialize-and-deserialize-binary-tree/
 
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
 public class Codec {
 
     // Encodes a tree to a single string.
     public String serialize(TreeNode root) {
-        StringBuilder s = new StringBuilder("");
-        reserialize(root, s);
-        return s.toString();
+        StringBuilder sb = new StringBuilder();
+        helper(root, sb);
+        return sb.toString();
     }
     
-    public String easyToRemSerialize(TreeNode root) {
-        if(root == null) return "#";
-        return root.val + "," + easyToRemSerialize(root.left) + "," + easyToRemSerialize(root.right);
-    }
-    
-    public void reserialize(TreeNode root, StringBuilder s) {
-        // if(root == null) return "#";
-        // return root.val + "," + reserialize(root.left) + "," + rserialize(root.right);
-        if(root == null) {
-            s.append("#");
+    void helper(TreeNode root, StringBuilder sb) {
+        if (root == null) {
+            sb = sb.append("null,");
             return;
         }
-        s.append(root.val + ",");
-        reserialize(root.left, s);
-        s.append(",");
-        reserialize(root.right, s);        
+        sb.append(root.val + ",");
+        helper(root.left, sb);
+        helper(root.right, sb);
     }
 
     // Decodes your encoded data to tree.
     public TreeNode deserialize(String data) {
         String[] split = data.split(",");
-        return rdeserialize(new LinkedList<String>(Arrays.asList(split)));
+        Queue<String> Q = new LinkedList<>(Arrays.asList(split));
+        return helper2(Q);
     }
     
-    public TreeNode rdeserialize(Deque<String> Q) {
-        // Actually we dont need to do the Q.isEmpty() check here because
-        // the way the tree is serialized will fit into the exact no of recursive calls.
-        String val = Q.remove();
-        if(val.equals("#")) return null;
-        TreeNode root = new TreeNode(Integer.valueOf(val));
-        root.left = rdeserialize(Q);
-        root.right = rdeserialize(Q);
+    // we don't need to check if Q.isEmpty() as it will always
+    // have element and will terminate properly.
+    TreeNode helper2(Queue<String> Q) {
+        String s = Q.remove();
+        if (s.equals("null")) return null;
+        TreeNode root = new TreeNode(Integer.parseInt(s));
+        root.left = helper2(Q);
+        root.right = helper2(Q);
         return root;
     }
 }
