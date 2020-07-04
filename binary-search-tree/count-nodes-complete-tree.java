@@ -19,38 +19,55 @@ Input:
 Output: 6
 */
 
+// Recursive.
+class Solution {    
+    int height(TreeNode root) {
+        if (root == null) return 0;
+        return 1 + height(root.left);
+    }    
+    public int countNodes(TreeNode root) {
+        int h1 = height(root);
+        if (h1 == 0) return 0;
+        int h2 = 1 + height(root.right);
+        // it means that the right tree with height h2 - 1 is a complete tree we need to count the nodes of left tree.
+        if (h1 - 1 == h2) return (1 << (h2 - 1)) + countNodes(root.left);
+        // else left is a complete tree and right need to be counted.
+        else return (1 << (h1 - 1)) + countNodes(root.right);        
+    }
+}
+
+// Using the property of complete tree and doing a BST for the last level.
 class Solution {
     public int countNodes(TreeNode root) {
-        int d = 0;
+        if (root == null) return 0;
+        int level = 0;
         TreeNode temp = root;
-        if(temp == null) return 0;
-        while(temp.left != null){
+        while (temp != null) {
             temp = temp.left;
-            d++;
+            level++;
         }
-        if(d == 0) return 1;
-        int upper = (int) Math.pow(2, d) - 1;
-        int l = 0, r = (int) Math.pow(2, d) - 1;
-        while(l <= r){
-            int pivot = l + (r - l) / 2;
-            if(exists(root, d, pivot)) l = pivot + 1;
-            else r = pivot - 1;            
+        int upper = (1 << (level - 1)) - 1;
+        int last = 0;
+        int l = 1, h = (1 << (level - 1));
+        while (l <= h) {
+            int m = (l + h) >>> 1;
+            if (exists(root, m, level)) {
+                last = m;
+                l = m + 1;
+            } else h = m - 1;
         }
-        int lower = l;
-        return upper + lower;
+        return upper + last;
     }
     
-    boolean exists(TreeNode root, int d, int idx){
-        int l = 0, r = (int) Math.pow(2, d) - 1;
-        for(int i = 0; i < d; i++){
-            int half = l + (r - l) / 2;
-            if(idx <= half) {
+    boolean exists(TreeNode root, int mid, int level) {
+        for (int l = 1, h = (1 << (level - 1)), d = 1; d < level; d++) {
+            int m = (l + h) >>> 1;
+            if (mid <= m) {
                 root = root.left;
-                r = half;
-            }
-            else{
+                h = m;
+            } else {
                 root = root.right;
-                l = half;
+                l = m + 1;
             }
         }
         return root != null;
