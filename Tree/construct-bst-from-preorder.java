@@ -1,4 +1,6 @@
 /*
+https://leetcode.com/problems/construct-binary-search-tree-from-preorder-traversal/
+
 Example 1:
 
 Input: [8,5,1,7,10,12]
@@ -6,7 +8,31 @@ Output: [8,5,10,1,7,null,12]
 
 */
 
-// Approach 1:
+// Approach 1: Using the property of each node of BST.
+
+class Solution {
+    int ind = 0;
+    public TreeNode bstFromPreorder(int[] preorder) {
+        return helper(preorder, Integer.MIN_VALUE, Integer.MAX_VALUE); // pass lower and upper bound.
+    }
+    
+    TreeNode helper(int[] preorder, int lower, int upper) {
+        if (ind >= preorder.length) return null;
+        int curr = preorder[ind];
+        if (curr < lower || curr > upper) return null;
+        ind++;
+        TreeNode root = new TreeNode(curr);
+        // All elements on my left should be less than me, so I am their upper bound.
+        // And their lower bound will be same as mine.
+        root.left = helper(preorder, lower, curr);
+        // All elems on my right should be greater than me, so I am their lower bound.
+        // And their upper bound will be same as mine.
+        root.right = helper(preorder, curr, upper);
+        return root;
+    }
+}
+
+// Approach 2: Using the property of BST, smaller elements goes to left and larger to right.
 
 class Solution {
     public TreeNode bstFromPreorder(int[] preorder) {
@@ -21,34 +47,6 @@ class Solution {
         while(p + 1 <= h && preorder[p + 1] < root.val) p++;
         root.left = getBST(preorder, l + 1, p);
         root.right = getBST(preorder, p + 1, h);
-        return root;
-    }
-}
-
-// Approach 2:
-
-class Solution {
-    int idx = 0;
-    public TreeNode bstFromPreorder(int[] preorder) {
-        return bst(preorder, Integer.MIN_VALUE, Integer.MAX_VALUE);
-    }
-    
-    TreeNode bst(int[] preorder, int lower, int upper) {
-        if(idx == preorder.length) return null;
-        int val = preorder[idx];
-        
-        // comparison is always valid id >lower && <upper
-        if(val < lower || val > upper) return null;
-        idx++;
-        TreeNode root = new TreeNode(val);
-        
-        // To the left goes: lesser than the current node's value
-        // so current node's value is passed as upper.
-        root.left = bst(preorder, lower, val);
-        
-        // To the right goes, greater than the current node's value
-        // hence current node's val is passed as lower.
-        root.right = bst(preorder, val, upper);
         return root;
     }
 }
