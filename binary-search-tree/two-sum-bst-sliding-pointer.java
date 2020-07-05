@@ -22,31 +22,33 @@ Explanation: 2 and 3 sum up to 5.
  */
 class Solution {
     public boolean twoSumBSTs(TreeNode root1, TreeNode root2, int target) {
-        Stack<TreeNode> stack1 = new Stack<TreeNode>();
-        Stack<TreeNode> stack2 = new Stack<TreeNode>();
-        while(true){
-            while(root1 != null){
-                stack1.add(root1);
-                root1 = root1.left;
+        Stack<TreeNode> stack1 = new Stack<>();
+        Stack<TreeNode> stack2 = new Stack<>();
+        TreeNode curr1 = root1, curr2 = root2;
+        while ((curr1 != null || !stack1.isEmpty()) && (curr2 != null || !stack2.isEmpty())) {
+            while (curr1 != null) {
+                stack1.push(curr1);
+                curr1 = curr1.left;
             }
-            while(root2 != null){
-                stack2.add(root2);
-                root2 = root2.right;
+            while (curr2 != null) {
+                stack2.push(curr2);
+                curr2 = curr2.right;
             }
-            if(stack1.isEmpty() || stack2.isEmpty()) return false;
-            TreeNode temp1 = stack1.peek();
-            TreeNode temp2 = stack2.peek();
-            int sum = temp1.val + temp2.val;
-            if(sum == target) return true;
-            else if(sum < target){
-                stack1.pop();
-                root1 = temp1.right;
-            }
-            else{
+            curr1 = stack1.peek();
+            curr2 = stack2.peek();
+            int sum = curr1.val + curr2.val;
+            if (sum == target) return true;
+            else if (sum > target) {
                 stack2.pop();
-                root2 = temp2.left;
+                curr2 = curr2.left;
+                curr1 = null; // make sure that we make the curr1 = null again, as it was changes because of peek, otherwise infinte loop.
+            } else {
+                stack1.pop();
+                curr1 = curr1.right;
+                curr2 = null; // make sure that we make the curr1 = null again, as it was changes because of peek, otherwise infinte loop.
             }
         }
+        return false;
     }
 }
 
