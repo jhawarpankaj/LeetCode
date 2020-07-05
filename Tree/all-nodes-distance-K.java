@@ -122,21 +122,21 @@ class Solution {
         }
         return result;
     }
-    
+    // here returning null or target helps us differentiate if goal is found or not.
     TreeNode helper(TreeNode root, TreeNode target, Map<TreeNode, TreeNode> parent) {
         if (root == null) return null;
         if (root == target) return target;
         TreeNode left = helper(root.left, target, parent);
-        if (left != null) {
-            parent.put(root.left, root);
-            return left;            
+        if (left != null) { // we have found the target on the left.
+            parent.put(root.left, root); // this will start adding parents from target to root.
+            return left; // no point in exploring the right side, as goal already found on left.
         }
         TreeNode right = helper(root.right, target, parent);
-        if (right != null) {
-            parent.put(root.right, root);
-            return right;
+        if (right != null) { // we found a target on the right side.
+            parent.put(root.right, root); // start putting parent pointers.
+            return right; // terminate recursion, letting parent callers know that there is a goal node found on this path.
         }
-        return null;        
+        return null; // else, null is returned letting parent callers know that goal was not found on this route and they will carry on recursion in search of call.
     }    
 }
 
@@ -145,36 +145,28 @@ class Solution {
 // For Finding nodes K distance above it: After reaching the target node, we can stop the traversal and move upwards, but let the upward call know that we are returning 
 // after finding the target node (as we can return after hitting a null also, we need to differentiate this)
 // We can use, 2 different types of return value for both the above cases, so that we can assess which return call it is.
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode(int x) { val = x; }
- * }
- */
 class Solution {
     public List<Integer> distanceK(TreeNode root, TreeNode target, int K) {
         List<Integer> result = new ArrayList<>();
         helper(root, target, result, K);
         return result;
     }
-    
+    // same as above, except removing the use of parent map.
+    // Utilizing the fact that recursion does return to the parent, so use that unfolding of recursion.
     int helper(TreeNode root, TreeNode target, List<Integer> result, int K) {
         if (root == null) return -1;
         if (root == target) {
-            dfsDown(root, K, result);
-            return 1;
+            dfsDown(root, K, result); // target was found, so explore all the children.
+            return 1; // returning 1 will let the parent caller know that its distance from goal is 1 distance.
         }
         int left = helper(root.left, target, result, K);
-        if (left != -1) {
+        if (left != -1) { // this helps us to identify that a goal was found on this path.
             if (left == K) result.add(root.val);
             else if (left < K) dfsDown(root.right, K - left - 1, result);
             return left + 1;
         }
         int right = helper(root.right, target, result, K);
-        if (right != -1) {
+        if (right != -1) { // same as left call.
             if (right == K) result.add(root.val);
             else if (right < K) dfsDown(root.left, K - right - 1, result);
             return right + 1;
