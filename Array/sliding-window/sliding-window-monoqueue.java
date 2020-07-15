@@ -298,3 +298,58 @@ class Solution {
         return max;
     }
 }
+
+/*
+Problem7: https://leetcode.com/problems/trapping-rain-water/
+
+Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it is able to trap after raining.
+The above elevation map is represented by array [0,1,0,2,1,0,1,3,2,1,2,1]. In this case, 6 units of rain water (blue section) are being trapped. 
+Example:
+Input: [0,1,0,2,1,0,1,3,2,1,2,1]
+Output: 6
+*/
+
+class Solution {
+    public int trap(int[] height) {
+        Stack<Integer> stack = new Stack<>();
+        int tot = 0;
+        for (int curr = height.length - 1; curr >= 0; curr--) {
+            // if the node at top of stack (M) is lesser than the curr one(L), we know the right(the second node from top) and left(L) boundaries for M.
+            while (!stack.isEmpty() && height[curr] >= height[stack.peek()]) {
+                int mid = stack.pop();
+                if (stack.isEmpty()) break;
+                int right = stack.peek();
+                int min = Math.min(height[curr], height[right]);
+                int water = (min - height[mid]) * (right - curr - 1); // total water in the region (including the top of this node, plus left, plus right)
+                tot += water;
+            }
+            stack.push(i);
+        }
+        return tot;
+    }
+}
+
+// Using 2 pointer approach.
+// Assuming the lMax and rMax as the global left and right boundaries (they will be updating for the first time)
+// if height[l] < height[h], we are sure that there is a right boundary >= height[h] (this is why we always choose to go for the lesser value, 
+// because that guarantees a high boundary on right).
+// we now calculate the water for this bar using the lMax (why not rMax or height[h]?)
+
+class Solution {
+    public int trap(int[] height) {
+        int tot = 0;
+        int lMax = 0, rMax = 0;
+        for (int l = 0, h = height.length - 1; l <= h; ) {
+            if (height[l] < height[h]) {
+                if (height[l] >= lMax) lMax = height[l];
+                else tot += (lMax - height[l]);
+                l++;
+            } else {
+                if (height[h] >= rMax) rMax = height[h];
+                else tot += (rMax - height[h]);
+                h--;
+            }
+        }
+        return tot;
+    }
+}
