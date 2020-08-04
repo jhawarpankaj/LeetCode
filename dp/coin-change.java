@@ -16,15 +16,19 @@ Note:
 You may assume that you have an infinite number of each kind of coin.
 */
 
+/*
+Space Optimized for Unbounded Knapsack.  
+As we trying to optimize, order of for loop doesn't matter. We choose the easier one.
+*/
 class Solution {
     public int coinChange(int[] coins, int amount) {
         int[] V = new int[amount + 1];
-        for(int i = 1; i < V.length; i++){
+        for (int i = 1; i <= amount; i++) {
             int min = Integer.MAX_VALUE;
-            for(int j = 0; j < coins.length; j++){
-                if(i - coins[j] >= 0) min = Math.min(min, V[i - coins[j]]);
+            for (int j = 0; j < coins.length; j++) {
+                if (i - coins[j] >= 0) min = Math.min(min, V[i - coins[j]]);
             }
-            if(min == Integer.MAX_VALUE) V[i] = min;
+            if (min == Integer.MAX_VALUE) V[i] = min;
             else V[i] = 1 + min; // to count the no of min coins required, +1 for using the current coin.
         }
         return V[amount] == Integer.MAX_VALUE ? -1 : V[amount];
