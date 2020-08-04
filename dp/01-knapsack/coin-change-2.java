@@ -25,9 +25,9 @@ class Solution {
     public int change(int amount, int[] coins) {
         int[] V = new int[amount + 1];
         V[0] = 1;
-        for(int i = 1; i < V.length; i++) {            
-            for(int j = 0; j < coins.length; j++) {
-                if(i - coins[j] >= 0) V[i] += V[i - coins[j]]; 
+        for (int i = 1; i < V.length; i++) {            
+            for (int j = 0; j < coins.length; j++) {
+                if (i - coins[j] >= 0) V[i] += V[i - coins[j]]; 
             }
         }
         return V[amount];
@@ -35,15 +35,15 @@ class Solution {
 }
 
 /*
-If we use, the idea of 0/1 Knapsack, get the count when coin 1 is used once for all the amounts, then coin 2 and then coin 5, 
-we can avoid the duplicates, as in this approach for any amount i, the coins [1, 2, 5] are used only once.
+Space Optmized DP for Unbounded Knapsack.
+Order of the for loop matters to get the unique combination.
 */
 class Solution {
     public int change(int amount, int[] coins) {
         int[] V = new int[amount + 1];
         V[0] = 1;
-        for(int i = 0; i < coins.length; i++) {
-            for(int j = coins[i]; j <= amount; j++) {
+        for (int i = 0; i < coins.length; i++) { // pick each coin one by one.
+            for (int j = coins[i]; j <= amount; j++) { 
                 V[i] += V[j - coins[i]];
             }
         }
