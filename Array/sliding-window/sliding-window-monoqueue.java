@@ -3,7 +3,8 @@
 /*
 Problem1 : https://leetcode.com/problems/minimum-size-subarray-sum/
 
-Given an array of n positive integers and a positive integer s, find the minimal length of a contiguous subarray of which the sum ≥ s. If there isn't one, return 0 instead.
+Given an array of n positive integers and a positive integer s, find the minimal length of a contiguous subarray of which the sum ≥ s. 
+If there isn't one, return 0 instead.
 Example: 
 Input: s = 7, nums = [2,3,1,2,4,3]
 Output: 2
@@ -70,7 +71,8 @@ class Solution {
         for (int i = 0; i <= n; i++) {
             // Assume that the Queue has elements (lets call them OLD) which are greater than the current element (lets call it CURR): 
             // Now for a sec imagine that in the future we will find a number (lets call it FUT) whose difference with the OLD, i.e., FUT - OLD >= K.
-            // Then we can conclude that FUT - CURR will also be >= K, also with the guarantee that this subarray will be smaller than the one formed by FUT - OLD.
+            // Then we can conclude that FUT - CURR will also be >= K, also with the guarantee that this subarray will be smaller than 
+            // the one formed by FUT - OLD.
             while (!DQ.isEmpty() && P[i] <= P[DQ.peekLast()]) DQ.removeLast();
             // With the same logic as above, we can remove the elements from the beginning of DEQUE, i.e., if with the current element, if we have already
             // found a min subarray, the numbers which will be coming in the future cannot give a better minimum subarray. 
@@ -83,7 +85,8 @@ class Solution {
 
 /*
 Problem3: https://leetcode.com/problems/daily-temperatures/
-Given a list of daily temperatures T, return a list such that, for each day in the input, tells you how many days you would have to wait until a warmer temperature. 
+Given a list of daily temperatures T, return a list such that, for each day in the input, tells you how many days you would have to wait until a 
+warmer temperature. 
 If there is no future day for which this is possible, put 0 instead.
 For example, given the list of temperatures T = [73, 74, 75, 71, 69, 72, 76, 73], your output should be [1, 1, 4, 2, 1, 1, 0, 0].
 Note: The length of temperatures will be in the range [1, 30000]. Each temperature will be an integer in the range [30, 100].
@@ -155,7 +158,8 @@ class Solution {
 
 /*
 Problem5: https://leetcode.com/problems/sliding-window-maximum/
-Given an array nums, there is a sliding window of size k which is moving from the very left of the array to the very right. You can only see the k numbers in the window. 
+Given an array nums, there is a sliding window of size k which is moving from the very left of the array to the very right. You can only see the k numbers 
+in the window. 
 Each time the sliding window moves right by one position. Return the max sliding window.
 Follow up:
 Could you solve it in linear time?
@@ -222,9 +226,10 @@ Output: 10
 
 // Another classic example of Monoq.
 // Idea is: to get the area of the largest rectangle, we need to cal area of every bar and get the max (area of any bar can be determined after knowing how far it 
-// can extend on it's right and left) [Both the right and left extension can be determined by finding a bar smaller than it's own height on the left and right continuous 
-// subarray].
-// So the problem again asks something to look for in the continuous subarray: at the current position, go left and right and find the bar smaller than current height.
+// can extend on it's right and left) [Both the right and left extension can be determined by finding a bar smaller than it's own height on the left and 
+// right continuous subarray].
+// So the problem again asks something to look for in the continuous subarray: at the current position, go left and right and find the bar smaller 
+// than current height.
 // If we maintain a monoq, increasing from end, on finding a smaller bar, we will know the left and right limits of the bar on top of the stack.
 
 class Solution {
