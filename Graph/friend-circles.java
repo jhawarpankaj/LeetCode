@@ -36,27 +36,24 @@ class Solution {
         int[] root = new int[n];
         for (int i = 0; i < n; i++) root[i] = i;
         for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
+            for (int j = i + 1; j < n; j++) {
                 if (M[i][j] == 1) union(root, i, j);
             }
         }
-        int count = 0;
+        int ans = 0;
         for (int i = 0; i < n; i++) {
-            if (root[i] == i) count++;
+            if (root[i] == i) ans++;
         }
-        return count;
+        return ans;
     }
-    
-    void union(int[] root, int a, int b) {
-        int aRoot = find(root, a);
-        int bRoot = find(root, b);
-        if (aRoot == bRoot) return;
-        root[aRoot] = root[bRoot];
-    }
-    
+    void union(int[] root, int i, int j) {
+        int findI = find(root, i);
+        int findJ = find(root, j);
+        if (findI == findJ) return;
+        root[findI] = root[findJ];
+    }    
     int find(int[] root, int i) {
         while (i != root[i]) i = root[i];
         return i;
-    }
-    
+    }    
 }
