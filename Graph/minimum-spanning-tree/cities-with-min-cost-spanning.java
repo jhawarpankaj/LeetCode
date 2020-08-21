@@ -50,11 +50,14 @@ class Solution {
         Set<Integer> visited = new HashSet<>();
         while (!PQ.isEmpty()) {
             int[] curr = PQ.remove();
-            if (visited.contains(curr[0])) continue;
+            // below line is needed here in MST. In normal iterative DFS it is ignored as it doesn't create any problem there.
+            // But here there is one more statement right before the for loop, which will create problem if not checked.
+            // As a best practise, same should be followed in case of iterative DFS approach also.
+            if (visited.contains(curr[0])) continue; 
             visited.add(curr[0]);
-            ans += curr[1];
+            ans += curr[1]; // the problem creating line.
             for (int[] adj : graph.getOrDefault(curr[0], new ArrayList<>())) {
-                PQ.add(adj);
+                if (!visited.contains(adj[0])) PQ.add(adj); // add all elements to PQ like we add in stack for DFS.
             }
         }
         return visited.size() == N ? ans : -1;
