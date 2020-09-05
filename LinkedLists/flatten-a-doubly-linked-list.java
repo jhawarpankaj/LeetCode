@@ -15,26 +15,29 @@ class Solution {
     }
     
     Node dfs(Node head) {
-        if (head == null) return null;
         // a previous pointer will be one step behind the curr node.
         // As the curr pointer will become null in the while loop iteration and the parent call needs the last node
         // and not null, we keeping this lagging previous pointer.
-        Node prev = head; 
-        Node curr = head;
+        Node prev = head, curr = head;
         while (curr != null) {
-            if (curr.child != null) {
-                Node last = dfs(curr.child);
-                Node temp = curr.next;
-                curr.next = curr.child;
-                curr.next.prev = curr;
-                curr.child = null;
-                last.next = temp;
-                if (temp != null) temp.prev = last;
-                curr = last;
+            if (curr.child == null) {
+                prev = curr;
+                curr = curr.next;
+            } else {
+                Node tail = dfs(curr.child);
+                changePointers(curr, curr.next, curr.child, tail);
+                prev = tail;
+                curr = tail.next;
             }
-            prev = curr;
-            curr = curr.next;
         }
         return prev;
+    }
+    
+    void changePointers(Node pHead, Node pNext, Node cHead, Node cNext) {
+        pHead.next = cHead;
+        cHead.prev = pHead;
+        cNext.next = pNext;
+        if (pNext != null) pNext.prev = cNext;
+        pHead.child = null;
     }
 }
