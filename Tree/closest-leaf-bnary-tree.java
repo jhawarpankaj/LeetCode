@@ -109,3 +109,53 @@ class Solution {
         return null;
     }
 }
+
+// Path from root to target can be stored in an ArrayList or an Stack instead of hashmap.
+
+class Solution {
+    public int findClosestLeaf(TreeNode root, int k) {
+        Stack<TreeNode> parent = new Stack<>();
+        TreeNode target = buildParentPath(root, parent, k);
+        return bfs(target, parent);        
+    }
+    
+    TreeNode buildParentPath(TreeNode root, Stack<TreeNode> parent, int k) {
+        if (root == null) return null;
+        if (root.val == k) return root;
+        parent.push(root);
+        TreeNode left = buildParentPath(root.left, parent, k);
+        // note that the we need to return the final target node to the main function. Otherwise, we could also return any non-null value (root node).
+        if (left != null) return left; 
+        TreeNode right = buildParentPath(root.right, parent, k);
+        if (right != null) return right;
+        parent.pop();
+        return null;
+    }
+    
+    int bfs(TreeNode target, Stack<TreeNode> parent) {
+        if (target == null) return -1;
+        Queue<TreeNode> Q = new LinkedList<>();
+        Q.add(target);
+        Set<TreeNode> visited = new HashSet<>();
+        while (!Q.isEmpty()) {
+            for (int i = Q.size(); i > 0; i--) {
+                TreeNode curr = Q.remove();
+                if (curr.left == null && curr.right == null) return curr.val;
+                if (curr.left != null && !visited.contains(curr.left)) {
+                    Q.add(curr.left);
+                    visited.add(curr.left);
+                }
+                if (curr.right != null && !visited.contains(curr.right)) {
+                    Q.add(curr.right);
+                    visited.add(curr.right);
+                }
+                if (!parent.isEmpty()) {
+                    TreeNode top = parent.pop();
+                    Q.add(top);
+                    visited.add(top);
+                }
+            }
+        }
+        return -1;
+    }
+}
