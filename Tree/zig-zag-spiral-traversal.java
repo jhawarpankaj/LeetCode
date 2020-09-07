@@ -1,7 +1,8 @@
 /*
 https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/
 
-Given a binary tree, return the zigzag level order traversal of its nodes' values. (ie, from left to right, then right to left for the next level and alternate between).
+Given a binary tree, return the zigzag level order traversal of its nodes' values. (ie, from left to right, then right to left for the next level and 
+alternate between).
 
 For example:
 Given binary tree [3,9,20,null,null,15,7],
@@ -49,7 +50,7 @@ class Solution {
     }
 }
 
-// Using a Queue and Deque or LinkedList for odd/even level.
+// Using a Queue and LinkedList for odd/even level.
 class Solution {
     public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
         List<List<Integer>> result = new ArrayList<List<Integer>>();
@@ -68,6 +69,36 @@ class Solution {
             }
             result.add(new ArrayList<Integer>(temp));
             even = !even;
+        }
+        return result;
+    }
+}
+
+// Using Deque
+class Solution {
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        Deque<TreeNode> DQ = new ArrayDeque<>();
+        boolean odd = true;
+        List<List<Integer>> result = new ArrayList<>();
+        if (root == null) return result;
+        DQ.add(root);
+        while (!DQ.isEmpty()) {
+            List<Integer> temp = new ArrayList<>();
+            for (int i = DQ.size(); i > 0; i--) {
+                if (odd) {
+                    TreeNode curr = DQ.removeFirst();
+                    if (curr.left != null) DQ.addLast(curr.left);
+                    if (curr.right != null) DQ.addLast(curr.right);
+                    temp.add(curr.val);
+                } else {
+                    TreeNode curr = DQ.removeLast();
+                    if (curr.right != null) DQ.addFirst(curr.right);
+                    if (curr.left != null) DQ.addFirst(curr.left);
+                    temp.add(curr.val);
+                }
+            }
+            result.add(temp);
+            odd = !odd;
         }
         return result;
     }
