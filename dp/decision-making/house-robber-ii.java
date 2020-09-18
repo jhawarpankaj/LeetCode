@@ -1,8 +1,12 @@
 /*
+https://leetcode.com/problems/house-robber-ii/
 
-You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed. All houses at this place are arranged in a circle. That means the first house is the neighbor of the last one. Meanwhile, adjacent houses have security system connected and it will automatically contact the police if two adjacent houses were broken into on the same night.
+You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed. All houses at this place are arranged 
+in a circle. That means the first house is the neighbor of the last one. Meanwhile, adjacent houses have security system connected and it will automatically 
+contact the police if two adjacent houses were broken into on the same night.
 
-Given a list of non-negative integers representing the amount of money of each house, determine the maximum amount of money you can rob tonight without alerting the police.
+Given a list of non-negative integers representing the amount of money of each house, determine the maximum amount of money you can rob tonight without 
+alerting the police.
 
 Example 1:
 
@@ -19,25 +23,23 @@ Explanation: Rob house 1 (money = 1) and then rob house 3 (money = 3).
              
 */
 
-// Idea is to break the circular chain and consider the problem as the linear house-robber problem.
+// Break the circular chain the problem becomes the linear house-robber problem. But note that we cannot modify the given input as we need 2 iterate it twice.
 
 class Solution {
-    
     public int rob(int[] nums) {
         int n = nums.length;
-        if(n == 0) return 0;
-        if(n == 1) return nums[n - 1];
-        if(n == 2) return Math.max(nums[0], nums[1]); // not required actually.
-        return Math.max(robs(nums, 0, n - 2), robs(nums, 1, n - 1));
+        if (n == 0) return 0;
+        if (n == 1) return nums[0];
+        return Math.max(helper(nums, 0, n - 2), helper(nums, 1, n - 1));
     }
     
-    public int robs(int[] nums, int l, int h) {
-        int prev = 0, prevPrev = 0, current = 0;
-        for(int i = l; i <= h; i++) {
-            current = Math.max(nums[i] + prevPrev, prev);
-            prevPrev = prev;
-            prev = current;
+    int helper(int[] nums, int l, int h) {
+        int a = 0, b = nums[l], c = nums[l];
+        for (int i = l + 1; i <= h; i++) {
+            c = Math.max(nums[i] + a, b);
+            a = b;
+            b = c;
         }
-        return current;
+        return c;
     }
 }
