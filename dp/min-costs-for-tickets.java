@@ -1,5 +1,8 @@
 /*
-In a country popular for train travel, you have planned some train travelling one year in advance.  The days of the year that you will travel is given as an array days.  Each day is an integer from 1 to 365.
+https://leetcode.com/problems/minimum-cost-for-tickets/
+
+In a country popular for train travel, you have planned some train travelling one year in advance.  
+The days of the year that you will travel is given as an array days.  Each day is an integer from 1 to 365.
 
 Train tickets are sold in 3 different ways:
 
@@ -23,27 +26,28 @@ On day 20, you bought a 1-day pass for costs[0] = $2, which covered day 20.
 In total you spent $11 and covered all the days of your travel.
 */
 
+// say, if we are at day 8(i), we can each there by buying a 1 day pass today (the amount for that would be, add whatever cost was there before today and then 
+// add 1 day costs)
+// or by buying a 7 day pass on day 2 (and likewise for 30) [the amount for that would be, if you buying pass on day2, add the cost, and also add whatever 
+// total cost till now (i.e., dp[i - 7])].
+
 class Solution {
     public int mincostTickets(int[] days, int[] costs) {
-        int n = days.length;
-        int[] V = new int[days[n - 1] + 1];
-        int[] pass = {1, 7, 30};
-        int prev = 0;
-        for(int i = 0; i < n; i++) {
-            int current = days[i];
-            int temp = V[prev];
-            while(++prev < current) V[prev] = temp;
-            int min = Integer.MAX_VALUE;            
-            for(int j = 0; j < pass.length; j++){
-                int val = current - pass[j] + 1;
-                min = Math.min(min, (val - 1 < 0 ? costs[j] : V[val - 1] + costs[j]));
+        int n = days[days.length - 1];
+        Set<Integer> daysManTravel = new HashSet<>();
+        for (int x : days) daysManTravel.add(x);
+        int[] dp = new int[n + 1];
+        for (int i = 1; i < dp.length; i++) {
+            if (!daysManTravel.contains(i)) {
+                dp[i] = dp[i - 1];
+                continue;
+            } else {
+                dp[i] = Math.min(
+                    dp[i - 1] + costs[0], 
+                    Math.min(dp[Math.max(i - 7, 0)] + costs[1], dp[Math.max(i - 30, 0)] + costs[2])
+                    );
             }
-            V[days[i]] = min;
         }
-        return V[V.length - 1];
+        return dp[n];
     }
 }
-
-// this is also similar to the staircase problem.
-// We have to reach target (days[days.length - 1]) from the source (0) with the constraint that
-// we can have a ticket for 1-day/7-days/30-days. We have to find a minimum of all these values.
