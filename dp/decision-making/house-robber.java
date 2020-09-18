@@ -1,4 +1,6 @@
 /*
+https://leetcode.com/problems/house-robber/
+
 You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, 
 the only constraint stopping you from robbing each of them is that adjacent houses have security system connected and 
 it will automatically contact the police if two adjacent houses were broken into on the same night.
@@ -21,9 +23,8 @@ Explanation: Rob house 1 (money = 1) and then rob house 3 (money = 3).
 // DIFFERENT SOLUTIONS ...
 
 
-// Naive recurive solution without DP ...
-// Problem here is we will be calculating same solution again and again.
-// Can be improvised with the use of Dynamic Programming.
+// Naive recurive solution without DP.
+// Here we are calculating same solution again and again. Can be improvised with the use of Dynamic Programming.
 
 class Solution {
     public int rob(int[] nums) {
@@ -36,8 +37,7 @@ class Solution {
     }
 }
 
-// Recursion with DP ...
-// Logic is same as above, just instead of recursing on all values, we store the intermittent results.
+// Recursion with DP. Logic is same as above, just instead of recursing on all values, we store the intermittent results.
 
 class Solution {
     int[] dp;
@@ -55,35 +55,41 @@ class Solution {
     }
 }
 
-// Iteration with DP ...
+/*
+DP Bottom Up.
+
+How did you come uo with the for loop indexes i = 2?
+    If you think that you want a solution for every index i and come up with your recurrence relation, you will understand that we need to access i - 2 for one of the cases when we rob the current house. So if we want to take care of that we have to start for loop index from i = 2;
+    
+Why did you initialize dp of size n + 1?
+    We always want to solve all DP problems for every index i, and final soln will be value of index i - 1.
+    We can also have manually initialized dp[0] and dp[1].
+*/
 
 class Solution {
     public int rob(int[] nums) {
-        if(nums.length == 0) return 0;
-        int[] dp = new int[nums.length + 1];
-        dp[0] = 0; dp[1] = nums[0];
-        for(int i = 1; i < nums.length; i++) {
-            dp[i + 1] = Math.max(dp[i], dp[i - 1] + nums[i]);
+        int n = nums.length;
+        if (n == 0) return 0;
+        int[] dp = new int[n + 1];
+        dp[1] = nums[0];
+        for (int i = 2; i <= n; i++) {
+            dp[i] = Math.max(nums[i - 1] + dp[i - 2], dp[i - 1]);
         }
-        return dp[nums.length];
+        return dp[n];
     }
 }
 
-// Iteration DP without extra space.
-// From the above solution, we can see, we need only the last 2 values
-// So, instead of storing the entire information we can just store the last 2 values with 2 variables.
-
+// Space can be easily optimized as we need only last 2 values.
 class Solution {
     public int rob(int[] nums) {
-        if (nums.length == 0) return 0;
-        int with = nums[0], without = 0;
-        for (int i = 1; i < nums.length; i++) {
-            int temp = with;
-            with = nums[i] + without; // picking curr elem, so cannot pick last elem.
-            without = Math.max(temp, without); // if not picking curr elem, will pack the max of prev (with, without).
+        int n = nums.length;
+        if (n == 0) return 0;
+        int a = 0, b = nums[0], c = nums[0];
+        for (int i = 2; i <= n; i++) {
+            c = Math.max(nums[i - 1] + a, b);
+            a = b;
+            b = c;
         }
-        return Math.max(with, without);
+        return c;
     }
 }
-
-
