@@ -1,11 +1,11 @@
 /*
-Given a square array of integers A, we want the minimum sum of a falling path through A.
+https://leetcode.com/problems/minimum-falling-path-sum/
 
+Given a square array of integers A, we want the minimum sum of a falling path through A.
 A falling path starts at any element in the first row, and chooses one element from each row.  The next row's 
 choice must be in a column that is different from the previous row's column by at most one.
 
 Example 1:
-
 Input: [[1,2,3],[4,5,6],[7,8,9]]
 Output: 12
 Explanation: 
@@ -16,30 +16,36 @@ The possible falling paths are:
 The falling path with the smallest sum is [1,4,7], so the answer is 12.
 
 Note:
-
 1 <= A.length == A[0].length <= 100
 -100 <= A[i][j] <= 100
 */
 
+/*
+1. Again note that, we are always told the forward ways to reach (i, j). But think reverse: that you are already at (i, j), then ask, how did you reach here.
+2. Always write modular code to avoid clutter in the main flow of the code. (TODOs itentionally left to emphasize that).
+*/
+
 class Solution {
     public int minFallingPathSum(int[][] A) {
-        int n = A.length;
-        for(int i = 1; i < n; i++){
-            for(int j = 0; j < n; j++){
-                int min1 = Math.min((j == 0 ? Integer.MAX_VALUE: A[i - 1][j - 1]), A[i - 1][j]);
-                int min2 = Math.min(min1, (j == n - 1 ? Integer.MAX_VALUE : A[i - 1][j + 1]));
-                A[i][j] += min2;
+        int r = A.length, c = A[0].length; // it will be the same as it is a square.        
+        for (int i = 1; i < r; i++) {
+            A[i][0] += Math.min(A[i - 1][0], A[i - 1][1]); // if it is first cell of each row
+            A[i][c - 1] += Math.min(A[i - 1][c - 2], A[i - 1][c - 1]); // if it is last cell of each row
+            for (int j = 1; j < c - 1; j++) {
+                A[i][j] += min(A[i - 1][j - 1], A[i - 1][j], A[i - 1][j + 1]); // TODO
             }
-        }
-        
-        int min = Integer.MAX_VALUE;
-        for(int j = 0; j < n; j++){
-            min = Math.min(A[n - 1][j], min);
-        }
+        }        
+        return getMin(A[r - 1]); // TODO        
+    }
+    
+    int min(int a, int b, int c) {
+        return Math.min(a, Math.min(b, c));
+    }
+    
+    int getMin(int[] arr) {
+        int min = arr[0];
+        for (int x : arr) min = Math.min(min, x);
         return min;
     }
+    
 }
-
-// The idea is similar to the stair climb problem.
-// We have to reach from a source to target with some constraints on reaching the target (the allowed movements in this case)
-// and find the minimum of all such paths.
