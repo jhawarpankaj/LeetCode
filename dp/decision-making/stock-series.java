@@ -1,9 +1,9 @@
 /*
- Problem 1: (only 1 transaction allowed)
- https://leetcode.com/problems/best-time-to-buy-and-sell-stock/ 
- 
- Problem 2: (2 transactions allowed)
+ Problem 1 (2 transactions allowed)
  https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/
+ 
+ Problem 2 (only 1 transaction allowed)
+ https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
  
  Problem 3: (unlimited transactions allowed)
  https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/
@@ -18,68 +18,57 @@
  https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/
 */
 
-==============================================================================================================================================================================
-==============================================================================================================================================================================
+=================================================================================================================================================================
+=================================================================================================================================================================
 
 /*
-SOLUTION APPROACH FOR ALL PROBLEMS:
-The stock series problems are a classic example of Decision Making in Dynamic Programming. Steps to think:
- 1. At any given day i, we have 3 options: BUY, SELL, NEITHER BUY NOR SELL. 
- 2. But we don't know which action to take on which day.
- 3. So we will try all 3 of them and store the required optimization (max profit). Just note that, NEITHER BUY NOR SELL is equivalent to not changing the BUY/SELL values.
-Now, to solve all these problems we just need to understand one thing that max profit is obtained when one buys at the minimum price and sell at the maximum price.
-With this we are good to solve all problems.
+1. Like other DP problems think that you are at day i. On any day i, what are all the things that we can do: B1, P1, B2, P2.
+2. But we don't know which one among these will take place on that particular day. So, we'll try all of them and keep track of our objective function (max profit).
+3. But realise that the result will not be P1 + P2. Why? Take one example: prices = [2, 5]. If we return P1 + P2, we will be counting the same profit twice.
+   Also, in another example, prices = [2, 4, 8, 10] we will get the max profit by doing only one Buy and Sell transaction (10 - 2 = 8).
+4. So, the approach is that whenever we are doing the second buy we should keep in mind the profit already made using the first B1, P1 transactions.
+   So, this way P1/B1 will always hold the max profitable range and P2/B2 will always account for the profit made from P1/B1 transaction and also any new range.
 */
  
-// With only one transaction.
+// With atmost 2 transactions.
 class Solution {
     public int maxProfit(int[] prices) {
         int n = prices.length;
         if (n == 0) return 0;
-        int buy = prices[0], profit = 0; // profit represents selling on that day.
+        int B1 = prices[0], B2 = prices[0];
+        int P1 = 0, P2 = 0;
         for (int i = 1; i < n; i++) {
-            buy = Math.min(buy, prices[i]); // always buy at minimum.
-            profit = Math.max(profit, prices[i] - buy); // note that we are calculating profit and not updating a sell variable, as we don't want to sell before buying (think). 
+            P1 = Math.max(P1, prices[i] - B1);
+            B1 = Math.min(B1, prices[i]);
+            P2 = Math.max(P2, prices[i] - B2); 
+            B2 = Math.min(B2, prices[i] - P1); 
+            // note that if we do not reduce P1, we end up doing the same thing as B1, P1.
+            // By reducing P1, we take care of the max. profit already made and then search for another new range.
+        }
+        return P2;
+    }
+}
+
+=================================================================================================================================================================
+=================================================================================================================================================================
+
+// One Transaction.
+class Solution {
+    public int maxProfit(int[] prices) {
+        int n = prices.length;
+        if (n == 0) return 0;
+        int profit = 0, buy = prices[0];        
+        // on any day, we can either buy or sell.
+        for (int i = 1; i < n; i++) {
+            profit = Math.max(profit, prices[i] - buy);
+            buy = Math.min(buy, prices[i]);
         }
         return profit;
     }
 }
 
-==============================================================================================================================================================================
-==============================================================================================================================================================================
-
-/*
-With 2 transactions.
-It is very important understand this problem. All other problems will be solved easily if we understand this.
-Looking at the question, we can see that now on any day we have 4 options to choose from: BUY/SELL for tran1 and BUY/SELL for tran2 (i.e., BUY1, SELL1, BUY2, SELL2).
-If you look at the first 2 line in the for loop below it's the code for only one transaction. 
-Also, looking at the last 2 line in the for loop below it is doing the same thing as the first 2 line except in the buy2 we subtract the profit earned from tran1.
-That is what is important to understand. Note that this time we are looking for the 2 LARGEST INCREASING RANGES in the array. 
-1. The first LARGEST INCREASING RANGE is always present at PROFIT1.
-2. In the BUY2 line we are subtracting the PROFIT1, which will give us the profit obtained from 2 transactions when we calculated profit2. 
-(Think of this as attaching a range of value profit1 below BUY2).
-
-There is another way of thinking too which helps. When we are doing the BUY2 transaction, it means we already had done a BUY1/SELL1 and while doing BUY2 we would ofcourse like
-to use the money earned from BUY1/SELL1 transaction.
-*/
-class Solution {
-    public int maxProfit(int[] prices) {
-        int n = prices.length;
-        if (n == 0) return 0;
-        int buy1 = Integer.MAX_VALUE, profit1 = 0;
-        int buy2 = Integer.MAX_VALUE, profit2 = 0;
-        for (int i = 0; i < n; i++) {
-            buy1 = Math.min(buy1, prices[i]);
-            profit1 = Math.max(profit1, prices[i] - buy1);
-            buy2 = Math.min(buy2, prices[i] - profit1);
-            profit2 = Math.max(profit2, prices[i] - buy2);
-        }
-        return profit2;
-    }
-}
-
-==============================================================================================================================================================================
-==============================================================================================================================================================================
+=================================================================================================================================================================
+=================================================================================================================================================================
 
 /*
 Unlimited Transactions.
@@ -91,13 +80,13 @@ class Solution {
     public int maxProfit(int[] prices) {
         int n = prices.length;
         if (n == 0) return 0;
-        int buy = prices[0];
-        int profit = 0;
+        int B = prices[0], P = 0;        
+        // on any day, we can buy or sell. whenever buying, we should take into consideration the profit already made.
         for (int i = 1; i < n; i++) {
-            buy = Math.min(buy, prices[i] - profit); // allowing infinite transactions.
-            profit = Math.max(profit, prices[i] - buy);
+            P = Math.max(P, prices[i] - B);
+            B = Math.min(B, prices[i] - P);
         }
-        return profit;
+        return P;
     }
 }
 
@@ -114,8 +103,8 @@ class Solution {
     }
 }
 
-==============================================================================================================================================================================
-==============================================================================================================================================================================
+=================================================================================================================================================================
+=================================================================================================================================================================
 
 /*
 With K transactions.
@@ -126,32 +115,31 @@ class Solution {
     public int maxProfit(int k, int[] prices) {
         int n = prices.length;
         if (n == 0 || k == 0) return 0;
-        if (k >= n / 2) return unlimitedTransactions(prices); // the problem turns to the same unlimited transaction problem.
-        int[] buy = new int[k + 1]; // k + 1 to fit in the first buy case, otherwise we have to do that specific step separately.
-        int[] profit = new int[k + 1];
-        Arrays.fill(buy, Integer.MAX_VALUE);
-        for (int i = 0; i < n; i++) {
-            for (int j = 1; j <= k; j++) {
-                buy[j] = Math.min(buy[j], prices[i] - profit[j - 1]);
-                profit[j] = Math.max(profit[j], prices[i] - buy[j]);
+        if (k > n / 2) return unlimitedTransaction(prices);
+        int[] B = new int[k];
+        int[] P = new int[k];
+        Arrays.fill(B, prices[0]);
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < k; j++) {
+                P[j] = Math.max(P[j], prices[i] - B[j]);
+                B[j] = Math.min(B[j], prices[i] - (j == 0 ? 0 : P[j - 1])); // we can initialize P and B with k + 1
             }
         }
-        return profit[k];
+        return P[k - 1];
     }
     
-    int unlimitedTransactions(int[] prices) {
-        int n = prices.length;
-        int buy = prices[0], profit = 0;
-        for (int i = 1; i < n; i++) {
-            buy = Math.min(buy, prices[i] - profit);
-            profit = Math.max(profit, prices[i] - buy);
+    int unlimitedTransaction(int[] prices) { 
+        int B = prices[0], P = 0;
+        for (int i = 1; i < prices.length; i++) {
+            P = Math.max(P, prices[i] - B);
+            B = Math.min(B, prices[i] - P);
         }
-        return profit;
+        return P;
     }
 }
 
-==============================================================================================================================================================================
-==============================================================================================================================================================================
+=================================================================================================================================================================
+=================================================================================================================================================================
 
 /*
 Unlimited transaction with a transacton fee for one transaction (note that buy and sell together makes one transaction).
@@ -187,8 +175,8 @@ class Solution {
     }
 }
 
-==============================================================================================================================================================================
-==============================================================================================================================================================================
+=================================================================================================================================================================
+=================================================================================================================================================================
 
 /*
 With cooldown.
@@ -210,9 +198,7 @@ class Solution {
     }
 }
 
-/*
-Solutions inspired from: https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/discuss/108870/Most-consistent-ways-of-dealing-with-the-series-of-stock-problems   
-*/
+=================================================================================================================================================================
+=================================================================================================================================================================
 
-==============================================================================================================================================================================
-==============================================================================================================================================================================
+// It's very important to understand the problem with 2 transactions, rest all problem can be solved if we understand that properly.
