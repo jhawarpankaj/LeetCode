@@ -195,26 +195,34 @@ public class BitonicSubsequence {
 // 1. We cannot place a bigger number on a pile of card. If the incoming card is smaller than the top of current card, it goes to the as left possible pile.
 // 2. If it greater, a new pile will be created. 
 // 3. At the end, we can see that a pointer from the end to beg is the longest increasing subsequence.
+
 class Solution {
     public int lengthOfLIS(int[] nums) {
         int n = nums.length;
-        if (n == 0) return 0;        
-        int[] sort = new int[n];
-        sort[0] = nums[0];
-        int len = 1;
+        if (n == 0) return 0;
+        List<Integer> list = new ArrayList<>();
+        list.add(nums[0]);
         for (int i = 1; i < n; i++) {
-            if (nums[i] > sort[len - 1]) sort[len++] = nums[i];
-            else if (nums[i] < sort[0]) sort[0] = nums[i];
+            int curr = nums[i];
+            if (curr <= list.get(0)) list.set(0, curr);
+            else if (curr > list.get(list.size() - 1)) list.add(curr);
             else {
-                int l = 0, h = len - 1;
-                while (l != h) {
-                    int m = (l + h) >>> 1;
-                    if (nums[i] > sort[m]) l = m + 1;
-                    else if (nums[i] <= sort[m]) h = m;
-                }
-                sort[l] = nums[i];
+                int ind = binarySearch(list, curr, 0, list.size() - 1); // TODO
+                list.set(ind, curr);
             }
         }
-        return len;
+        return list.size();
+    }
+    
+    int binarySearch(List<Integer> list, int curr, int l, int h) {
+        int ind = -1;
+        while (l <= h) {
+            int m = (l + h) >>> 1;
+            if (curr <= list.get(m)) {
+                ind = m;
+                h = m - 1;
+            } else l = m + 1;
+        }
+        return ind;
     }
 }
