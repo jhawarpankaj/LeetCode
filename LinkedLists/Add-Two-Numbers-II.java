@@ -76,13 +76,15 @@ class Solution {
     }
     
     /* 
-       Now while writing code for the recursive function, don't get confused if we should return carry or number or the node.
-       Always think that what the caller of this function needs, it's a Linked List in this case, so now just think how you can do that.
-       Infact, you can always return the type of value you want to from each node of a recursive tree. What will confuse us will be the
-       scenarios when it is a null node (left null or right null or leaf node, in case of a Binary Tree). Just handle those cases and you should be good.
+       1. Now while writing code for the recursive function, don't get confused if we should return carry or number or the node.
+          Always think that what the caller of this function needs, it's a ListNode in this case, so now just think how you can do that.
+          Infact, you can always return the type of value you want to from each node of a recursive tree. What will confuse us will be the
+          scenarios when it is a null node (left null or right null or leaf node, in case of a Binary Tree). Just handle those cases and you should be good.
+       2. Then while writing the logic (body) of this recursive code, assume that your child has returned you the ListNode and then write the main body.
+       3. Also, if you need any values from the parent node, use the method arguments for that.
     */
     ListNode solveForEqualSizes(ListNode l1, ListNode l2) {
-        if (l1.next == null) return new ListNode(l1.val + l2.val);
+        if (l1.next == null) return new ListNode(l1.val + l2.val); // we do not want to deal with null node.
         else {
             ListNode curr = new ListNode(0);
             ListNode child = solveForEqualSizes(l1.next, l2.next);
