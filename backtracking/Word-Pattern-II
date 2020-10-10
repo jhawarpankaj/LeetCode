@@ -1,0 +1,75 @@
+/*
+https://leetcode.com/problems/word-pattern-ii/
+
+Given a pattern and a string s, return true if s matches the pattern.
+A string s matches a pattern if there is some bijective mapping of single characters to strings such that if each character in pattern is replaced 
+by the string it maps to, then the resulting string is s. A bijective mapping means that no two characters map to the same string, and no character maps 
+to two different strings.
+
+Example 1:
+Input: pattern = "abab", s = "redblueredblue"
+Output: true
+Explanation: One possible mapping is as follows:
+'a' -> "red"
+'b' -> "blue"
+
+Example 2:
+Input: pattern = "aaaa", s = "asdasdasdasd"
+Output: true
+Explanation: One possible mapping is as follows:
+'a' -> "asd"
+
+Example 3:
+Input: pattern = "abab", s = "asdasdasdasd"
+Output: true
+Explanation: One possible mapping is as follows:
+'a' -> "a"
+'b' -> "sdasd"
+Note that 'a' and 'b' cannot both map to "asd" since the mapping is a bijection.
+
+Example 4:
+Input: pattern = "aabb", s = "xyzabcxzyabc"
+Output: false
+ 
+Constraints:
+0 <= pattern.length <= 20
+0 <= s.length <= 50
+pattern and s consist of only lower-case English letters.
+*/
+
+class Solution {
+    public boolean wordPatternMatch(String pattern, String s) {
+        Map<Character, String> cToW = new HashMap<>();
+        Map<String, Character> wToC = new HashMap<>();
+        if (pattern.length() > s.length()) return false;
+        return bt(pattern, 0, s, 0, cToW, wToC);
+    }
+    
+    boolean bt(String pat, int pInd, String str, int sInd, Map<Character, String> cToW, Map<String, Character> wToC) {
+        if (pInd == pat.length() && sInd == str.length()) return true;
+        if (pInd == pat.length() || sInd == str.length()) return false;
+        char c = pat.charAt(pInd);
+        for (int i = sInd; i < str.length(); i++) {
+            if (cToW.containsKey(c)) {
+                String wordFromMap = cToW.get(c);
+                if (i + wordFromMap.length() > str.length()) break;
+                String currWord = str.substring(sInd, i + wordFromMap.length());
+                if (wordFromMap.equals(currWord)) {
+                    if (bt(pat, pInd + 1, str, i + wordFromMap.length(), cToW, wToC)) return true;    
+                }
+            } else {
+                String word = str.substring(sInd, i + 1);
+                if (wToC.containsKey(word)) continue;
+                cToW.put(c, word);
+                wToC.put(word, c);
+                if (bt(pat, pInd + 1, str, i + 1, cToW, wToC)) return true;
+                cToW.remove(c);
+                wToC.remove(word);
+            }
+        }
+        return false;
+    }
+}
+
+// Time Complexity: pattern length = m, string length = n, T(m, n) = T(m - 1, n - 1) + T(m - 1, n - 2) + ...
+// T(n) = m ^ n
