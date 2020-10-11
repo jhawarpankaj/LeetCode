@@ -46,22 +46,18 @@ class Solution {
     public boolean wordBreak(String s, List<String> wordDict) {
         Set<String> set = new HashSet<>(wordDict);
         int n = s.length();
-        boolean[] dp = new boolean[n];
+        Boolean[] dp = new Boolean[n];
         return bt(s, 0, set, dp);
     }    
-    boolean bt(String s, int start, Set<String> set, boolean[] dp) {
-        // understand whats the problem with below:
-        // if (start == s.length() || dp[start]) return true; 
-        // Note that this entire code returns true only when start == s.length(), which is what we want.
+    boolean bt(String s, int start, Set<String> set, Boolean[] dp) {
         if (start == s.length()) return true;
+        if (dp[start] != null) return dp[start];
         for (int i = start; i < s.length(); i++) {
-            if (dp[i]) continue;
-            String word = s.substring(start, i + 1);
-            if (!set.contains(word)) continue;
-            dp[i] = true;
-            if (bt(s, i + 1, set, dp)) return true;
+            if (set.contains(s.substring(start, i + 1)) && bt(s, i + 1, set, dp)) {
+                return dp[i] = true; // note that this true is never used. When this happens chain of trues are returned.
+            }
         }
-        return false;
+        return dp[start] = false;
     }
 }
 
